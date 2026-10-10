@@ -1,0 +1,16 @@
+Run Get-Location using the terminal tool. Do not edit files. Report the result and any hook failure.
+
+---
+
+Inspect README.md and add a short “Entire development history” section.
+
+Include:
+- Entire tracks this project through approved Codex CLI hooks.
+- On this Windows machine, the working launch command is:
+  codex -c windows.sandbox=mxc
+- Imported checkpoints represent earlier sessions.
+- New captured work can be linked to Git commits.
+
+Do not claim that every hook warning is resolved or that checkpoints are publicly accessible.
+
+Edit only README.md. Do not read secret files, run model API calls, or commit yet. Show the diff when finished.
