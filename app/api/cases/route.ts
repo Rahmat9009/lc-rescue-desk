@@ -1,0 +1,10 @@
+import { getChatGPTUser } from "../../chatgpt-auth";
+import { fixtureDocs,newCase,CaseError } from "../../../lib/domain";
+import { listCases,insertCase } from "../../../lib/store";
+import { readiness } from "../../../lib/runtime";
+import { z } from "zod";
+export const docSchema=z.object({kind:z.enum(["lc","invoice","bl"]),name:z.string().min(1).max(120),text:z.string().min(1).max(16000)});
+export async function body(req:Request){const origin=req.headers.get("origin");if(origin&&origin!==new URL(req.url).origin)throw new CaseError("Same-origin request required.",403);const text=await req.text();if(text.length>60000)throw new CaseError("Request is too large.",413);try{return JSON.parse(text);}catch{throw new CaseError("Invalid JSON.");}}
+export function failure(e:unknown){if(e instanceof CaseError)return Response.json({error:e.message},{status:e.status});if(e instanceof z.ZodError)return Response.json({error:"Check the document fields and action."},{status:400});console.error("LC Rescue request failed",e instanceof Error?e.name:"unknown");return Response.json({error:"The operation failed. Your previous saved case is intact."},{status:500});}
+export async function GET(){try{const user=await getChatGPTUser();if(!user)return Response.json({error:"Sign in to access your desk."},{status:401});return Response.json({cases:await listCases(user.userId),config:readiness()});}catch(e){return failure(e);}}
+export async function POST(req:Request){try{const user=await getChatGPTUser();if(!user)return Response.json({error:"Sign in required."},{status:401});const p=z.object({mode:z.enum(["demo","live"]),asOf:z.string(),docs:z.array(docSchema).optional()}).parse(await body(req));if(p.mode==="live"&&!readiness().liveReady)throw new CaseError("Configure GEMINI_API_KEY, NEATLOGS_WRITE_KEY, NEATLOGS_PROJECT and LC_MODEL as server settings before live analysis.",503);const docs=p.mode==="demo"?fixtureDocs():(p.docs||[]).map(d=>({...d,version:1,synthetic:false}));const c=newCase(p.mode,docs,p.mode==="demo"?"2026-10-10":p.asOf);await insertCase(user.userId,c);return Response.json({case:c},{status:201});}catch(e){return failure(e);}}
