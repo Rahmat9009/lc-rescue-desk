@@ -40,6 +40,16 @@ node --test tests/live.test.mjs
 
 The in-process API test runs Miniflare with an isolated test D1 database. It does not open a preview server. Browser visual/interaction QA has not been performed in this environment.
 
+## Entire development history
+
+Entire tracks this project through approved Codex CLI hooks. On this Windows machine, launch Codex with:
+
+```sh
+codex -c windows.sandbox=mxc
+```
+
+Imported checkpoints represent earlier sessions. New captured work can be linked to Git commits.
+
 ## Live model and neatlogs configuration
 
 - `GEMINI_API_KEY`: server secret for Google's Gemini API.
