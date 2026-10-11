@@ -119,6 +119,13 @@ Do not pitch fixture execution as actual multi-agent execution. No benchmark aga
 
 The frontend includes version-bound assessment controls, source comparisons, correction-request review, responsive navigation and restrained landing motion with reduced-motion support. Design research and HTML studies are preserved in `design/`; downloaded reference screenshots and local browser renders are excluded from public Git. Runtime output, local case exports and databases are also excluded.
 
+### Published checkpoint evidence
+
+- Checkpoint ID: `01M4KKQFCR2B3TVHMYEHVKPW5H`
+- [View the checkpoint and linked commit](https://entire.io/gh/Rahmat9009/lc-rescue-desk/commit/945e2387867dc6ea2ac80806ca257e26aa97a943)
+
+This checkpoint captures the README development-history edit.
+Automatic bulk checkpoint pushing remains disabled.
 
 ## Building in public
 
