@@ -118,3 +118,11 @@ Do not pitch fixture execution as actual multi-agent execution. No benchmark aga
 2026-10-11: strict TypeScript check, production build, and all **91 tests** passed. Live-runtime tests use mocked model and ingest HTTP endpoints; they do not prove real model quality or neatlogs persistence. The pre-existing `app/desk.tsx` set-state-in-effect lint error remains, alongside 15 warnings. No deployment is implied by these checks.
 
 The frontend includes version-bound assessment controls, source comparisons, correction-request review, responsive navigation and restrained landing motion with reduced-motion support. Design research and HTML studies are preserved in `design/`; downloaded reference screenshots and local browser renders are excluded from public Git. Runtime output, local case exports and databases are also excluded.
+
+
+## Building in public
+
+Follow our #neatHack development updates:
+
+- [X — synthetic workflow and required tools](https://x.com/RahmatUlla51126/status/2109383439585820748?s=20)
+- [LinkedIn — revised-LC workflow and failure recovery](https://lnkd.in/p/dfiq8M6t)
