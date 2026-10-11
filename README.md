@@ -1,6 +1,6 @@
 # LC Rescue Desk
 
-A neatHack prototype for investigating LC document conflicts, proposing issuer corrections, recording human approval, responding to simulated counterparty replies, and checking revised document versions.
+A neatHack prototype for investigating LC document conflicts, proposing issuer corrections, recording human approval, assessing pasted counterparty correspondence, responding to simulated reply scenarios, and checking revised document versions.
 
 ## Current working scope
 
@@ -9,6 +9,7 @@ A neatHack prototype for investigating LC document conflicts, proposing issuer c
 - Exporter correction and carrier reissue request drafts. Approval binds source versions.
 - Revised versions and originals retained; independent recheck; complete JSON audit export.
 - Carrier delay and buyer-waiver scenarios produce safe escalation.
+- Pasted exporter or carrier replies are retained as user-provided, authenticity-unverified correspondence. Exact quotes support typed timing statements; code checks the recovery plan against the saved deadline, findings and document versions. Materially updated correction requests need fresh approval.
 - Owner-scoped D1 persistence with compare-and-swap revision checks.
 
 **Demo mode is deterministic fixture execution. It runs zero LLM agents.** Live mode executes three document investigators concurrently, then a remedy planner and counterparty coordinator. Code, rather than the model, controls validation, approval and final state. Full live workflow execution and persisted trace readback remain unverified.
@@ -102,6 +103,10 @@ An export request, a local Doctor pass, or a trace ID alone is not evidence that
 4. Receive synthetic revised versions → Recheck. Show retained originals in Documents.
 5. Open a second case and choose Carrier delay. Show that the deadline prevents a resolved outcome.
 6. Export case evidence, then show **real** sponsor artifacts after account setup.
+
+For the adaptive plan rehearsal, open a new synthetic case and investigate. Its case date is 2026-10-10 and calculated deadline is 2026-10-12. In **Correspondence and recovery plan**, submit the exporter reply `We will send the corrected invoice tomorrow.` Then submit the carrier reply `We can reissue the B/L in four days.` The second assessment should show a 2026-10-14 carrier date, a deadline conflict, human escalation and clarification, exact supporting quotes, unresolved questions, and the previous plans. Demo mode uses zero model calls. The pasted replies are user-provided and their authenticity is unverified; no bank extension, waiver, issuer confirmation or successful presentation is inferred.
+
+To check explicit dates, use `We will send the corrected invoice on 2026-10-12.` from the exporter and `We can reissue the corrected B/L on 2026-10-16.` from the carrier. The complete quotes and dates should appear, with the October 16 carrier date after the October 12 deadline. Availability of the invoice on the deadline leaves presentation time unresolved. For a previously saved case whose extracted quotes lost their dates, select **Reassess saved correspondence**; this rechecks the original pasted text deterministically, retains the earlier assessment and plan, and makes no model calls.
 
 Do not pitch fixture execution as actual multi-agent execution. No benchmark against a competent single-agent baseline has yet been run. Record fairness, latency, token cost, discrepancy precision and correction outcome when building that comparison.
 
