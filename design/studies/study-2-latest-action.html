@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Study 2 — latest action &amp; deadline</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+body{background:var(--sunk)}
+.wrap{max-width:1180px;margin:0 auto;padding:var(--s6) var(--s6) var(--s8)}
+
+/* B2 — case header. Fixed height; never reflows between statuses. */
+.head{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md) var(--r-md) 0 0;padding:var(--s4) var(--s5)}
+.head .r1{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+.head h1{font-size:19px;font-weight:600;letter-spacing:-.01em;margin:0}
+.head .sp{flex:1}
+.head .r2{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s3);padding-top:var(--s3);border-top:1px solid var(--line-soft)}
+.stage{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.stage span{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+.stage span.done{color:var(--mute)}
+.stage span.on{color:var(--ink);font-weight:500;border-bottom:2px solid var(--pine);padding-bottom:1px}
+.stage i{color:#c3ccc4;font-style:normal;font-size:11px}
+
+/* B3 + B4 — one row, shared top edge */
+.main{display:grid;grid-template-columns:minmax(0,1.58fr) minmax(0,1fr);background:var(--line);gap:1px;
+      border:1px solid var(--line);border-top:0;border-radius:0 0 var(--r-md) var(--r-md);overflow:hidden}
+.pane{background:var(--surface);padding:var(--s6)}
+.pane.alt{background:var(--sunk)}
+h2.act{font-size:var(--heading-1);font-weight:600;line-height:1.26;letter-spacing:-.013em;margin:0 0 var(--s3);max-width:30ch}
+.reason{font-size:var(--body-sm);color:var(--mute);margin:0 0 var(--s5);max-width:62ch;line-height:1.6}
+.ev{margin:0 0 var(--s5)}
+.ev .q{display:grid;grid-template-columns:auto minmax(0,1fr);gap:var(--s3);padding:9px 0;border-top:1px solid var(--line-soft);align-items:baseline}
+.ev .q .src{font-family:var(--mono);font-size:11px;color:var(--faint);white-space:nowrap}
+.ev .q .txt{font-family:var(--mono);font-size:var(--doc);line-height:1.6;color:var(--mute);overflow-wrap:anywhere}
+.ul{margin:0 0 var(--s5);padding:0;list-style:none}
+.ul li{font-size:14px;color:var(--mute);padding:6px 0 6px 18px;position:relative;line-height:1.55;max-width:62ch}
+.ul li::before{content:"";position:absolute;left:3px;top:14px;width:5px;height:1px;background:#c3ccc4}
+
+/* deadline strip (same component as study 1) */
+.axis{position:relative;height:82px;margin:var(--s4) 0 var(--s2)}
+.axis .line{position:absolute;left:0;right:0;top:46px;height:1px;background:var(--line)}
+.axis .tick{position:absolute;top:46px;width:1px;height:7px;background:#cfd8d1}
+.axis .tick b{position:absolute;top:11px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:10.5px;color:var(--faint);white-space:nowrap}
+.axis .due{position:absolute;top:20px;height:33px;width:2px;background:var(--pine);border-radius:1px;transform:translateX(-50%)}
+.axis .pt{position:absolute;top:41px;width:11px;height:11px;border-radius:50%;background:var(--surface);border:2px solid var(--pine);transform:translateX(-50%);z-index:2}
+.axis .pt.bad{border-color:var(--rust);background:var(--rust)}
+.axis .cap{position:absolute;top:0;font-family:var(--mono);font-size:10.5px;line-height:1.35;white-space:nowrap;color:var(--mute)}
+.axis .cap.bad{color:var(--rust);font-weight:500}
+.axis .cap.duec{color:var(--pine);font-weight:500}
+.kv{display:grid;grid-template-columns:1fr auto;gap:9px var(--s4);align-items:baseline;margin:var(--s5) 0 0;padding-top:var(--s4);border-top:1px solid var(--line)}
+.kv dt{font-size:13.5px;color:var(--mute)}
+.kv dd{margin:0;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13.5px;font-weight:500}
+.kv dd.bad{color:var(--rust)}
+.kv dd.none{color:var(--faint);font-weight:400}
+.fcap{font-family:var(--mono);font-size:11px;color:var(--faint);margin:var(--s4) 0 0;line-height:1.6}
+
+/* B9 — correspondence: quote, then what it changed */
+.block{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s6);margin-top:var(--s5)}
+.block > .label{margin-bottom:var(--s4)}
+.corr{border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.corr .ch{display:flex;align-items:center;gap:var(--s3);padding:10px var(--s4);background:var(--sunk);border-bottom:1px solid var(--line-soft)}
+.corr .ch b{font-family:var(--mono);font-size:12px;font-weight:500}
+.corr .ch .sp{flex:1}
+.corr .body{padding:var(--s4)}
+.corr blockquote{margin:0;font-family:var(--mono);font-size:var(--doc);line-height:1.7;color:var(--ink);
+                 border-left:2px solid var(--signal);padding-left:var(--s3)}
+.corr .ext{display:flex;gap:7px;flex-wrap:wrap;margin-top:var(--s4);padding-top:var(--s3);border-top:1px solid var(--line-soft)}
+.corr .ext > span.label{align-self:center;margin:0}
+
+/* B10/B11 — grouped history. One entry per episode, not per write. */
+details.hist{margin-top:var(--s5);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md)}
+details.hist > summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:var(--s3);padding:var(--s4) var(--s6)}
+details.hist > summary::-webkit-details-marker{display:none}
+details.hist > summary b{font-size:var(--heading-2);font-weight:600}
+details.hist > summary .sp{flex:1}
+.hbody{border-top:1px solid var(--line-soft);padding:var(--s3) var(--s6) var(--s5)}
+.ep{display:grid;grid-template-columns:76px minmax(0,1fr);gap:var(--s4);padding:var(--s4) 0;border-bottom:1px solid var(--line-soft)}
+.ep:last-child{border-bottom:0}
+.ep time{font-family:var(--mono);font-size:11.5px;color:var(--faint);padding-top:2px}
+.ep b{display:block;font-size:14px;font-weight:600;margin-bottom:7px}
+.ep .chips{display:flex;gap:7px;flex-wrap:wrap}
+.ep .sub{font-size:13px;color:var(--mute);margin-top:7px}
+.caption{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s4);margin-top:var(--s5)}
+
+@media (max-width:900px){
+  .wrap{padding:var(--s4) var(--s4) var(--s7)}
+  .main{grid-template-columns:1fr}
+  .pane{padding:var(--s5)}
+  .head .r1,.head .r2{gap:var(--s2)}
+  .axis{height:92px}
+  .axis .cap{font-size:9.5px}
+  .ev .q{grid-template-columns:1fr;gap:2px}
+  .ep{grid-template-columns:1fr;gap:var(--s2)}
+  details.hist>summary,.hbody{padding-left:var(--s5);padding-right:var(--s5)}
+  .block{padding:var(--s5)}
+  .caption{flex-direction:column;gap:var(--s2);align-items:flex-start}
+}
+</style></head><body><div class="wrap">
+
+<div class="head">
+  <div class="r1">
+    <h1>LC-2026-1042</h1>
+    <span class="chip">Demo · no model calls</span>
+    <span class="sp"></span>
+    <span class="chip">LC v1</span><span class="chip">INV v1</span><span class="chip">B/L v1</span>
+  </div>
+  <div class="r2">
+    <div class="stage">
+      <span class="done">Investigate</span><i>›</i><span class="done">Review plan</span><i>›</i><span class="on">Coordinate</span><i>›</i><span>Recheck</span><i>›</i><span>Reviewed</span>
+    </div>
+    <span class="sp"></span>
+    <span class="chip conflict">2 findings</span>
+    <span class="chip attention">2 days to deadline</span>
+  </div>
+</div>
+
+<div class="main">
+  <!-- B3 -->
+  <div class="pane">
+    <div class="label" style="margin-bottom:9px">Latest validated action</div>
+    <h2 class="act">Escalate to a trade specialist and clarify the carrier timeline and presentation options with the relevant parties.</h2>
+    <p class="reason">The cited carrier B/L correction availability 2026-10-16 falls after the saved presentation deadline 2026-10-12.</p>
+
+    <div class="label" style="margin-bottom:2px">Supporting evidence</div>
+    <div class="ev">
+      <div class="q"><span class="src">case · deadline</span><span class="txt">Saved presentation deadline: 2026-10-12</span></div>
+      <div class="q"><span class="src">carrier · 10-11</span><span class="txt">“We can reissue the corrected B/L on 2026-10-16.”</span></div>
+    </div>
+
+    <div class="label" style="margin-bottom:2px">Unresolved</div>
+    <ul class="ul">
+      <li>Availability on the presentation deadline does not establish time for document verification and presentation.</li>
+      <li>Correspondence authenticity and actual issuance remain unverified.</li>
+      <li>Bank extension, waiver, issuer confirmation, and successful presentation are unconfirmed.</li>
+    </ul>
+    <button class="btn ghost">Reassess saved correspondence</button>
+  </div>
+
+  <!-- B4 -->
+  <div class="pane alt">
+    <div class="label" style="margin-bottom:var(--s2)">Deadline &amp; availability</div>
+    <div class="axis">
+      <div class="line"></div>
+      <div class="tick" style="left:0%"><b>Oct 10</b></div>
+      <div class="tick" style="left:28.6%"><b>Oct 12</b></div>
+      <div class="tick" style="left:57.1%"><b>Oct 14</b></div>
+      <div class="tick" style="left:85.7%"><b>Oct 16</b></div>
+      <div class="due" style="left:28.6%"></div>
+      <div class="cap duec" style="left:0">deadline 2026-10-12</div>
+      <div class="cap" style="left:28.6%;top:18px;transform:translateX(-50%)">invoice</div>
+      <div class="cap bad" style="right:0;text-align:right">B/L 2026-10-16 &mdash; 4 days late</div>
+      <div class="pt" style="left:28.6%"></div>
+      <div class="pt bad" style="left:85.7%"></div>
+    </div>
+    <dl class="kv">
+      <dt>Case date</dt><dd>2026-10-10</dd>
+      <dt>Presentation deadline</dt><dd>2026-10-12</dd>
+      <dt>Invoice available</dt><dd>2026-10-12</dd>
+      <dt>B/L available</dt><dd class="bad">2026-10-16</dd>
+      <dt>Bank extension</dt><dd class="none">Not established</dd>
+      <dt>Timing</dt><dd class="bad">conflict</dd>
+    </dl>
+    <p class="fcap">Issuer authenticity and bank acceptance remain unconfirmed. Dates are counterparty statements, not commitments.</p>
+  </div>
+</div>
+
+<!-- B9 -->
+<div class="block">
+  <span class="label">Correspondence</span>
+  <div class="corr">
+    <div class="ch"><b>carrier</b><span class="chip">2026-10-11</span><span class="sp"></span>
+      <span class="label" style="text-transform:none;letter-spacing:0">authenticity unverified</span></div>
+    <div class="body">
+      <blockquote>We can reissue the corrected B/L on 2026-10-16.</blockquote>
+      <div class="ext">
+        <span class="label">Changed</span>
+        <span class="chip">commitment · bl · 2026-10-16</span>
+        <span class="chip conflict">timing <s>unknown</s> → conflict</span>
+        <span class="chip attention">approval invalidated</span>
+        <span class="chip">next action revised</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B10 + B11 merged -->
+<details class="hist" open>
+  <summary><b>History</b><span class="chip">3 episodes</span><span class="chip">44 events</span><span class="sp"></span>
+    <span class="label">Decisions · All activity</span></summary>
+  <div class="hbody">
+    <div class="ep"><time>10-11 03:44</time><div>
+      <b>Correction plan created</b>
+      <div class="chips"><span class="chip">timing unknown</span><span class="chip">2 findings</span><span class="chip ok">approved 03:45</span></div>
+      <div class="sub">Exporter reissues the invoice; carrier reissues the bill of lading.</div></div></div>
+    <div class="ep"><time>10-11 04:42</time><div>
+      <b>Clarification requested</b>
+      <div class="chips"><span class="chip">evidence +1 quotation</span><span class="chip attention">dates missing</span></div>
+      <div class="sub">Correction dates absent from the exporter reply.</div></div></div>
+    <div class="ep"><time>10-11 04:57</time><div>
+      <b>Remedy planner revised the plan · 12 revisions</b>
+      <div class="chips"><span class="chip conflict">timing <s>unknown</s> → conflict</span><span class="chip">next action <s>approve requests</s> → escalate</span><span class="chip attention">approval invalidated</span></div>
+      <div class="sub">Grouped: 12 writes produced one material change. Expand to compare any two revisions.</div></div></div>
+  </div>
+</details>
+
+<div class="caption">
+  <span class="label">Study 2 · latest action &amp; deadline · not the production interface</span>
+  <span class="chip attention">Synthetic demo case · not a bank instrument</span>
+</div>
+</div></body></html>

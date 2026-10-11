@@ -1,4 +1,4 @@
-import { CaseError, dateOK, documentVersions, plusDays, record } from './domain.ts';
+import { CaseError, dateOK, documentVersions, lcFollowUpBlocked, plusDays, record } from './domain.ts';
 import type { Case } from './domain.ts';
 
 export type Sender = 'exporter' | 'carrier' | 'other';
@@ -8,6 +8,7 @@ export type Extraction = { statements:Statement[]; missing:string[] };
 export type RecoveryAction = { id:string; kind:'request_invoice'|'request_bl'|'human_escalation'|'clarify_timing'|'recheck'; owner:string; dueDate:string|null; dependsOn:string[]; evidenceRefs:string[] };
 export type RecoveryPlan = { id:string; createdAt:string; documentVersions:string; correspondenceIds:string[]; deadline:string|null; actions:RecoveryAction[]; nextAction:string; reason:string; evidenceRefs:string[]; unresolved:string[]; timing:'feasible'|'conflict'|'unknown'; approvalRequired:boolean };
 export type PlanHistory = { plan:RecoveryPlan | NonNullable<Case['plan']>; approval?:Case['approval']; at:string };
+export type PlanningFailure = { documentVersions:string; at:string; reason:string; proposal:unknown };
 export function versionKey(c:Case):string{return c.docs.map(d=>`${d.kind}:v${d.version}`).join('|');}
 
 const actionKinds = new Set<RecoveryAction['kind']>(['request_invoice','request_bl','human_escalation','clarify_timing','recheck']);
@@ -77,7 +78,8 @@ export function validateRecoveryPlan(c:Case, candidate:unknown, statements:State
  const actions:RecoveryAction[]=raw.actions.map((value:unknown)=>{
   if(!value||typeof value!=='object')throw new CaseError('Remedy action is invalid.',502);
   const a=value as Record<string,unknown>;
-  if(typeof a.id!=='string'||!/^a[1-8]$/.test(a.id)||!actionKinds.has(a.kind as RecoveryAction['kind'])||typeof a.owner!=='string'||!a.owner.trim()||a.owner.length>80||!(a.dueDate===null||typeof a.dueDate==='string'&&dateOK(a.dueDate))||!Array.isArray(a.dependsOn)||!Array.isArray(a.evidenceRefs)||a.evidenceRefs.length===0||a.dependsOn.some(x=>typeof x!=='string')||a.evidenceRefs.some(x=>typeof x!=='string'||!refs.has(x)))throw new CaseError('Remedy action has an unsupported date or evidence reference.',502);
+  if(typeof a.id!=='string'||!/^a[1-8]$/.test(a.id)||!actionKinds.has(a.kind as RecoveryAction['kind'])||typeof a.owner!=='string'||!a.owner.trim()||a.owner.length>80||!(a.dueDate===null||typeof a.dueDate==='string'&&dateOK(a.dueDate))||!Array.isArray(a.dependsOn)||!Array.isArray(a.evidenceRefs)||a.evidenceRefs.length===0||a.dependsOn.some(x=>typeof x!=='string')||a.evidenceRefs.some(x=>typeof x!=='string'))throw new CaseError('Remedy action has an unsupported date or evidence reference. Every action requires id, kind, owner, explicit dueDate (date or null), dependsOn and evidenceRefs.',502);
+  if(a.evidenceRefs.some(x=>!refs.has(x)))throw new CaseError(`Remedy action ${a.id} has an unsupported evidence reference. Use only the explicit allowedEvidenceRefs.`,502);
   if(a.kind==='request_invoice'&&a.owner!=='Exporter'||a.kind==='request_bl'&&a.owner!=='Carrier')throw new CaseError('Correction request owner conflicts with the saved case.',502);
   return a as RecoveryAction;
  });
@@ -112,6 +114,40 @@ export function validateRecoveryPlan(c:Case, candidate:unknown, statements:State
  const correctionActions=actions.some(a=>a.kind==='request_invoice'||a.kind==='request_bl');
  return {id:crypto.randomUUID(),createdAt:new Date().toISOString(),documentVersions:documentVersions(c),correspondenceIds:(c.correspondence||[]).map(r=>r.id),deadline:c.deadline??null,actions,nextAction,reason,evidenceRefs,unresolved,timing,approvalRequired:correctionActions};
 }
+/** Code supplies literal identifiers and dates, never a model-computed deadline. */
+export function recoveryPlannerInput(c:Case, receipt:Correspondence, extraction:Extraction) {
+ const receipts=[...(c.correspondence||[]),receipt];
+ const statements=[...(c.statements||[]),...extraction.statements].filter(s=>receipts.find(r=>r.id===s.correspondenceId)?.sourceVersions===versionKey(c));
+ const findings=c.findings.map(f=>({id:f.id,doc:f.doc,title:f.title,quote:f.quote,evidenceRef:`finding:${f.id}`}));
+ const supported=statements.filter(s=>s.category==='commitment'&&s.date);
+ const supportedCommitmentDatesByKind=Object.fromEntries(['invoice','bl'].map(target=>[target==='invoice'?'request_invoice':'request_bl',[...new Set(supported.filter(s=>s.target===target).map(s=>s.date!))]]));
+ const allowedEvidenceRefs=[...findings.map(f=>f.evidenceRef),...statements.map(s=>`statement:${s.id}`),...(c.deadline?['deadline']:[])];
+ const requiredActionKinds=defaultCandidate(c,statements).actions.map(a=>a.kind);
+ const allowedActionKinds=[...new Set(requiredActionKinds)],correctionsPermitted=!allowedActionKinds.includes('clarify_timing');
+ const allowedDueDatesByKind=correctionsPermitted?supportedCommitmentDatesByKind:{request_invoice:[],request_bl:[]};
+ const allowedDates=[...new Set(Object.values(allowedDueDatesByKind).flat())];
+ return {findings,documentVersions:c.docs.map(d=>({kind:d.kind,version:d.version})),deadline:c.deadline??null,deadlineRef:c.deadline?'deadline':null,statements:statements.map(s=>({...s,evidenceRef:`statement:${s.id}`})),missing:extraction.missing,allowedEvidenceRefs,supportedCommitmentDatesByKind,allowedDueDatesByKind,requiredActionKinds,allowedActionKinds,correctionsPermitted,
+  outputContract:{root:'Exactly {actions: [...]}',actionFields:['id','kind','owner','dueDate','dependsOn','evidenceRefs'],ids:'a1 through a8, unique and in dependency order',kinds:allowedActionKinds,owners:{request_invoice:'Exporter',request_bl:'Carrier'},dueDate:'Required. Correction requests use an exact allowed date and its cited commitment for that target. Other actions use null. The deadline is not a correspondence commitment date.',evidenceRefs:'Copy literal strings from allowedEvidenceRefs. Missing diagnostics are not evidence identifiers; never invent missing: references.',timing:correctionsPermitted?'Code permits the required correction requests.':'Code prohibits ALL correction requests while ANY required issuer timing is missing, late or on the deadline. Only human_escalation and clarify_timing are permitted.',actionSchema:{type:'object',additionalProperties:false,required:['id','kind','owner','dueDate','dependsOn','evidenceRefs'],properties:{id:{type:'string',pattern:'^a[1-8]$'},kind:{enum:allowedActionKinds},owner:{type:'string'},dueDate:{enum:[null,...allowedDates]},dependsOn:{type:'array',items:{type:'string',pattern:'^a[1-8]$'}},evidenceRefs:{type:'array',minItems:1,items:{enum:allowedEvidenceRefs}}}}}};
+}
+
+/** Preserve successful extraction and failed bounded proposals, but authorize no work.
+ * This is a blocked result, not a deterministic replacement for model planning. */
+export function blockRecoveryPlanning(c:Case,receipt:Correspondence,extraction:Extraction,proposal:unknown,reason:string):Case {
+ const n=structuredClone(c),at=new Date().toISOString();
+ n.correspondence=[...(n.correspondence||[]),receipt];n.statements=[...(n.statements||[]),...extraction.statements];
+ if(n.recoveryPlan||n.plan)n.planHistory=[...(n.planHistory||[]),{plan:structuredClone(n.recoveryPlan||n.plan!),approval:structuredClone(n.approval),at}];
+ // Retain bounded structured action output locally. Oversized/unstructured raw
+ // provider responses are not copied into audit; no evidence is truncated to fit.
+ const bounded=boundedPlanningProposal(proposal);
+ n.planningFailures=[...(n.planningFailures||[]),{documentVersions:documentVersions(n),at,reason,proposal:bounded}];
+ n.recoveryPlan=undefined;n.approval=undefined;n.status='stopped';
+ if(n.lcUpdateRequirements)n.lcUpdateRequirements.timingConfirmationRequired=true;
+ record(n,'Remedy planner','Recovery planning rejected',`${reason} Supported correspondence retained; no replacement plan or approval authorized.`);
+ n.revision++;return n;
+}
+export function boundedPlanningProposal(proposal:unknown):unknown|null {
+ return proposal&&typeof proposal==='object'&&JSON.stringify(proposal).length<=16000?structuredClone(proposal):null;
+}
 export function defaultCandidate(c:Case, statements:Statement[]):{actions:RecoveryAction[]} {
  const actions:RecoveryAction[]=[];const add=(kind:RecoveryAction['kind'],owner:string,dueDate:string|null,evidenceRefs:string[],dependsOn:string[]=[])=>actions.push({id:`a${actions.length+1}`,kind,owner,dueDate,dependsOn,evidenceRefs});
  const relevant=statements.filter(s=>s.category==='commitment'&&s.date&&c.findings.some(f=>f.doc===s.target));
@@ -121,22 +157,27 @@ export function defaultCandidate(c:Case, statements:Statement[]):{actions:Recove
  return {actions};
 }
 export function newCorrespondence(c:Case,sender:Sender,text:string):Correspondence {
+ if(c.pendingLcAssessment)throw new CaseError('Select or dismiss the pending LC assessment before changing the recovery plan.');
  if(!['approval','waiting','stopped'].includes(c.status)||!c.plan)throw new CaseError('Investigate a correction case before adding correspondence.');
  if(!['exporter','carrier','other'].includes(sender)||!text.trim()||text.length>8000)throw new CaseError('Provide a sender and up to 8,000 characters of correspondence.');
  return {id:crypto.randomUUID(),sender,text:text.trim(),receivedOn:c.mode==='demo'?c.asOf:new Date().toISOString().slice(0,10),sourceVersions:versionKey(c),label:'User-provided correspondence · authenticity unverified'};
 }
 export function applyCorrespondence(c:Case,receipt:Correspondence,extraction:Extraction,candidate:unknown):Case {
+ if(c.pendingLcAssessment)throw new CaseError('Select or dismiss the pending LC assessment before changing the recovery plan.');
+ if(c.lcUpdateRequirements&&(c.lcUpdateRequirements.documentVersions!==documentVersions(c)||receipt.sourceVersions!==versionKey(c)))throw new CaseError('Current LC basis and timing evidence bindings are required.');
  const n=structuredClone(c);
  n.correspondence=[...(n.correspondence||[]),receipt];n.statements=[...(n.statements||[]),...extraction.statements];
  const prior=n.recoveryPlan||n.plan!;
  const plan=validateRecoveryPlan(n,candidate,n.statements);
  n.planHistory=[...(n.planHistory||[]),{plan:structuredClone(prior),approval:n.approval?structuredClone(n.approval):undefined,at:new Date().toISOString()}];
- n.recoveryPlan=plan;n.approval=undefined;n.status=plan.timing==='feasible'&&plan.approvalRequired?'approval':'stopped';
+ if(n.lcUpdateRequirements)n.lcUpdateRequirements.timingConfirmationRequired=plan.timing!=='feasible';
+ n.recoveryPlan=plan;n.approval=undefined;n.status=plan.timing==='feasible'&&plan.approvalRequired&&!lcFollowUpBlocked(n)?'approval':'stopped';
  record(n,'Counterparty coordinator','User-provided correspondence assessed',`${receipt.sender} · authenticity unverified · ${extraction.statements.length} supported quote(s). ${extraction.missing.join(' ')}`);
  record(n,'Remedy planner','Recovery plan updated',`${plan.timing}: ${plan.reason} Fresh human approval required for changed correction requests. No external messages sent.`);
  n.revision++;return n;
 }
 export function reassessSavedCorrespondence(c:Case):Case {
+ if(c.pendingLcAssessment)throw new CaseError('Select or dismiss the pending LC assessment before changing the recovery plan.');
  if(!c.plan||!c.correspondence?.length||!['approval','waiting','stopped'].includes(c.status))throw new CaseError('A saved correction case with correspondence is required.');
  const n=structuredClone(c),at=new Date().toISOString(),priorStatements=structuredClone(n.statements||[]);
  const currentReceipts=(n.correspondence||[]).filter(r=>r.sourceVersions===versionKey(n));
@@ -148,7 +189,8 @@ export function reassessSavedCorrespondence(c:Case):Case {
  const candidate=defaultCandidate(n,repaired);
  const plan=validateRecoveryPlan(n,candidate,repaired);
  n.planHistory=[...(n.planHistory||[]),{plan:structuredClone(prior),approval:n.approval?structuredClone(n.approval):undefined,at}];
- n.recoveryPlan=plan;n.approval=undefined;n.status=plan.timing==='feasible'&&plan.approvalRequired?'approval':'stopped';
+ if(n.lcUpdateRequirements)n.lcUpdateRequirements.timingConfirmationRequired=plan.timing!=='feasible';
+ n.recoveryPlan=plan;n.approval=undefined;n.status=plan.timing==='feasible'&&plan.approvalRequired&&!lcFollowUpBlocked(n)?'approval':'stopped';
  record(n,'Verifier','Saved correspondence reassessed',`Original user-provided text rechecked without model calls. ${repaired.length} complete supported quote(s). Authenticity remains unverified.`);
  record(n,'Remedy planner','Recovery plan updated',`${plan.timing}: ${plan.reason} Earlier assessment and plan retained in history. No external messages sent.`);
  n.revision++;return n;

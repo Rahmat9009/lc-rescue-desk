@@ -58,3 +58,20 @@ next-env.d.ts
 *.tsbuildinfo
 .dev.vars*
 !.env.example
+
+# Local verification, browser sessions and case/database exports.
+/.claude/
+/.playwright-cli/
+/output/
+*.sqlite
+*.sqlite3
+*.db
+*.db-wal
+*.db-shm
+
+# Downloaded reference screenshots and local browser renders stay off public Git.
+/design/references/
+/design/current/
+/design/verify/
+/design/studies/*.png
+/design/studies/*.gif

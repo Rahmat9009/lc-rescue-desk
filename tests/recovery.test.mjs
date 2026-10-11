@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {fixtureDocs,newCase,parseFixture,finishInvestigation,transition,plusDays} from '../lib/domain.ts';
-import {newCorrespondence,validateExtraction,demoQuotes,defaultCandidate,validateRecoveryPlan,applyCorrespondence,reassessSavedCorrespondence} from '../lib/recovery.ts';
+import {newCorrespondence,validateExtraction,demoQuotes,defaultCandidate,validateRecoveryPlan,applyCorrespondence,reassessSavedCorrespondence,recoveryPlannerInput,blockRecoveryPlanning} from '../lib/recovery.ts';
 
 function caseAtDeadline(){
  const docs=fixtureDocs();
@@ -74,4 +74,38 @@ test('a quoted date from an earlier document version cannot bind a new plan',()=
  c.correspondence=[r];c.docs[2].version++;
  const candidate={actions:[{id:'a1',kind:'request_bl',owner:'Carrier',dueDate:e.statements[0].date,dependsOn:[],evidenceRefs:[`statement:${e.statements[0].id}`]}]};
  assert.throws(()=>validateRecoveryPlan(c,candidate,e.statements),/evidence reference/);
+});
+
+test('planner contract supplies literal prefixed identifiers, target dates and code-controlled required actions',()=>{
+ const c=caseAtDeadline(),r=newCorrespondence(c,'exporter','We will send the corrected invoice on 2026-10-11.'),e=validateExtraction(c,r,{quotes:[r.text]});
+ const input=recoveryPlannerInput(c,r,e);
+ assert.equal(input.deadline,'2026-10-12');
+ assert.deepEqual(input.allowedEvidenceRefs,['finding:invoice.currency','finding:bl.consignee',`statement:${r.id}:s1`,'deadline']);
+ assert.deepEqual(input.supportedCommitmentDatesByKind,{request_invoice:['2026-10-11'],request_bl:[]});
+ assert.deepEqual(input.allowedDueDatesByKind,{request_invoice:[],request_bl:[]});
+ assert.equal(input.correctionsPermitted,false);
+ assert.deepEqual(input.allowedActionKinds,['human_escalation','clarify_timing']);
+ assert.deepEqual(input.requiredActionKinds,['human_escalation','clarify_timing']);
+ assert.equal(input.statements[0].evidenceRef,`statement:${e.statements[0].id}`);
+ assert.ok(input.outputContract.actionFields.includes('dueDate'));
+ const supported=defaultCandidate(c,e.statements),n={...c,correspondence:[r]};
+ assert.equal(validateRecoveryPlan(n,supported,e.statements).timing,'unknown');
+ const bad=structuredClone(supported);bad.actions[0].evidenceRefs=[e.statements[0].id];
+ assert.throws(()=>validateRecoveryPlan(n,bad,e.statements),/unsupported evidence reference/);
+ const deadline=structuredClone(supported);deadline.actions[0].dueDate=c.deadline;
+ assert.throws(()=>validateRecoveryPlan(n,deadline,e.statements),/unsupported by the cited/);
+ const omitted=structuredClone(supported);delete omitted.actions[0].dueDate;
+ assert.throws(()=>validateRecoveryPlan(n,omitted,e.statements),/explicit dueDate/);
+});
+
+test('invalid planner output retains extraction and failed proposal, archives decisions and authorizes no fallback',()=>{
+ let c=caseAtDeadline();c=transition(c,{type:'approve',revision:c.revision});
+ const r=newCorrespondence(c,'exporter','We will send the corrected invoice on 2026-10-11.'),e=validateExtraction(c,r,{quotes:[r.text]});
+ const bad={actions:[{id:'a1',kind:'human_escalation',owner:'Trade specialist',dueDate:null,dependsOn:[],evidenceRefs:['statement:invented']}]};
+ const n=blockRecoveryPlanning(c,r,e,bad,'Unsupported evidence reference.');
+ assert.equal(n.status,'stopped');assert.equal(n.approval,undefined);assert.equal(n.recoveryPlan,undefined);
+ assert.deepEqual(n.planningFailures[0].proposal,bad);assert.equal(n.statements[0].date,'2026-10-11');
+ assert.deepEqual(n.planHistory.at(-1).approval,c.approval);assert.deepEqual(n.fields,c.fields);assert.deepEqual(n.docs,c.docs);
+ assert.throws(()=>transition(n,{type:'approve',revision:n.revision}),/reviewed correction plan/);
+ assert.ok(!n.events.some(event=>event.title==='Recovery plan updated'));
 });

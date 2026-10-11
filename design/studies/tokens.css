@@ -1,0 +1,107 @@
+/* LC Rescue Desk — shared tokens. Both studies import this file unchanged.
+   That is the point: the landing and the workspace are one system, not two. */
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+:root{
+  /* --- surfaces: three grounds only --- */
+  --paper:#fbfbf9;        /* page */
+  --surface:#ffffff;      /* raised: cards, document bodies */
+  --sunk:#f4f6f3;         /* recessed: gutters, label cells, source text */
+  --forest:#0d3a2c;       /* inverted ground. from the brand mark */
+  --forest-2:#124433;
+
+  /* --- ink --- */
+  --ink:#141a16;
+  --mute:#5d6b62;
+  --faint:#8a988f;
+  --on-dark:#dce7dd;
+  --on-dark-mute:#90a897;
+
+  /* --- line: exactly two weights, never a shadow for separation --- */
+  --line:#dfe4df;
+  --line-soft:#ebefe9;
+  --line-dark:#2a5241;
+
+  /* --- status: each colour means one thing, everywhere --- */
+  --pine:#15503a;         /* required / authoritative / primary action */
+  --signal:#5ba288;       /* brand accent, from the mark. sparing */
+  --rust:#8e3b2e;         /* conflict: a value that breaks a term, a date past a deadline */
+  --rust-bg:#f9ece9;
+  --rust-mark:#f3cfc6;
+  --ochre:#8a6516;        /* attention, not yet a conflict: awaiting, assumed, unverified */
+  --ochre-bg:#f8f1e0;
+  --ok:#1d6b45;           /* passed the implemented checks. never "safe" or "approved by a bank" */
+  --ok-bg:#e8f1ea;
+
+  /* --- type: two families, SIL OFL, verified on Google Fonts 2026-10-11 --- */
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+
+  /* role scale — every size below is used by a named role, none is arbitrary */
+  --display-1:clamp(34px,4.6vw,56px);  /* hero headline only */
+  --display-2:clamp(24px,2.8vw,34px);  /* section opener */
+  --heading-1:26px;                    /* the latest action; case title */
+  --heading-2:17px;                    /* card title */
+  --body:17px;                         /* prose */
+  --body-sm:15px;                      /* dense prose, card copy */
+  --label:12px;                        /* mono, uppercase, tracked */
+  --data:15px;                         /* mono, tabular */
+  --data-lg:22px;                      /* the one number that matters on screen */
+  --doc:13.5px;                        /* document source text and quotations */
+
+  /* --- space: 4px base, only these steps --- */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:22px; --s6:30px; --s7:44px; --s8:64px; --s9:96px;
+
+  /* --- radii: three, by role --- */
+  --r-sm:5px;   /* chips, marks, inputs */
+  --r-md:9px;   /* cards, document frames */
+  --r-lg:14px;  /* page-level blocks: hero, inverted bands */
+
+  /* --- motion: only for state the user caused --- */
+  --ease:cubic-bezier(.2,0,0,1);
+  --fast:140ms; --slow:260ms;
+}
+@media (prefers-reduced-motion:reduce){ :root{ --fast:1ms; --slow:1ms; } }
+
+*{box-sizing:border-box}
+html{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:var(--body);line-height:1.62}
+
+/* ---- shared components ---- */
+.label{font-family:var(--mono);font-size:var(--label);font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--faint)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.btn{display:inline-flex;align-items:center;gap:var(--s2);font-family:var(--mono);font-size:14px;font-weight:500;letter-spacing:.01em;
+     background:var(--pine);color:#fff;border:1px solid var(--pine);border-radius:var(--r-sm);padding:11px 18px;min-height:44px;cursor:pointer;
+     transition:background var(--fast) var(--ease)}
+.btn:hover{background:#0f4230}
+.btn.ghost{background:transparent;color:var(--pine);border-color:var(--line)}
+.btn.ghost:hover{background:var(--sunk)}
+.btn.light{background:var(--signal);border-color:var(--signal);color:var(--forest);font-weight:500}
+.chip{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;font-weight:500;
+      border:1px solid var(--line);border-radius:var(--r-sm);padding:3px 8px;color:var(--mute);background:var(--surface);white-space:nowrap}
+.chip.conflict{color:var(--rust);border-color:#eccfc8;background:var(--rust-bg)}
+.chip.attention{color:var(--ochre);border-color:#e8dcc0;background:var(--ochre-bg)}
+.chip.ok{color:var(--ok);border-color:#cfe2d5;background:var(--ok-bg)}
+.chip s{text-decoration:line-through;opacity:.55;text-decoration-thickness:1px}
+:focus-visible{outline:2px solid var(--pine);outline-offset:3px;border-radius:2px}
+
+/* SourceDiff — the component that makes "linked to the line it came from" literal */
+.diff{border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;background:var(--surface)}
+.diff .row{display:grid;grid-template-columns:38px 168px minmax(0,1fr);border-bottom:1px solid var(--line-soft)}
+.diff .row:last-child{border-bottom:0}
+.diff .gut{font-family:var(--mono);font-size:12px;color:#b4bfb6;text-align:right;padding:10px 10px 10px 0;
+           border-right:1px solid var(--line-soft);background:var(--sunk);user-select:none}
+.diff .key{font-size:14px;color:var(--mute);padding:10px var(--s3);border-right:1px solid var(--line-soft)}
+.diff .val{font-family:var(--mono);font-size:var(--doc);line-height:1.7;padding:10px var(--s3);overflow-wrap:anywhere}
+.diff .row.required .val{color:var(--pine)}
+.diff .row.actual{background:var(--rust-bg)}
+.diff .row.actual .gut{background:#f6e2dd;color:#c2938a}
+.diff .row.actual .val{color:var(--rust)}
+.diff mark{background:var(--rust-mark);color:var(--rust);padding:0 3px;border-radius:2px}
+
+/* ---- responsive: the behaviour section-map.md B14 specifies ---- */
+@media (max-width:900px){
+  .diff .row{grid-template-columns:34px minmax(0,1fr)}      /* key moves above the value, gutter stays */
+  .diff .key{grid-column:2;border-right:0;padding-bottom:0;font-size:12.5px}
+  .diff .val{grid-column:2;padding-top:3px}
+}

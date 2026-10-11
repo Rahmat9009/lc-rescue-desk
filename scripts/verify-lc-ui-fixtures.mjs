@@ -1,0 +1,62 @@
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { newCase, fixtureDocs, parseFixture, finishInvestigation, transition, record } from '../lib/domain.ts';
+import { stageLcAssessment, selectLcBasis, assessmentBinding } from '../lib/lc-updates.ts';
+import { newCorrespondence, validateExtraction, demoQuotes, defaultCandidate, applyCorrespondence, reassessSavedCorrespondence } from '../lib/recovery.ts';
+import { createHash } from 'node:crypto';
+const output = 'output/playwright'; mkdirSync(output, { recursive: true });
+const receive = (c, sender, text) => {
+  const r = newCorrespondence(c, sender, text), e = validateExtraction(c, r, demoQuotes(text));
+  const draft = { ...c, correspondence: [...(c.correspondence || []), r] };
+  return applyCorrespondence(c, r, e, defaultCandidate(draft, [...(c.statements || []), ...e.statements]));
+};
+let c = newCase('live', fixtureDocs(), '2026-10-10'); c.id = 'phase4-isolated-browser-fixture';
+for (const d of c.docs) c.fields[d.kind] = parseFixture(d); finishInvestigation(c);
+c = receive(c, 'exporter', 'We will send the corrected invoice on 2026-10-11.');
+c = receive(c, 'carrier', 'We will reissue the B/L on 2026-10-11.');
+c = transition(c, { type: 'approve', revision: c.revision });
+const old = structuredClone(c), candidate = { ...c.docs[0], name: 'PHASE4-MOCK-LC-v2.txt', version: 2, text: c.docs[0].text.replace('expiry: 2026-10-12', 'expiry: 2026-10-20') };
+const assertion = { reviewer: 'Isolated synthetic reviewer', at: new Date().toISOString(), completeText: true, note: 'Synthetic complete source reviewed for this isolated browser check.' };
+c = stageLcAssessment(c, { revision: c.revision, assessmentId: 'phase4-mocked-assessment', candidate, extraction: { documentBinding: JSON.stringify(Object.fromEntries(Object.entries(candidate).sort(([a], [b]) => a.localeCompare(b)))), fields: parseFixture(candidate) }, assertion, asOf: c.asOf });
+const pending = structuredClone(c), a = c.pendingLcAssessment;
+const exact = { revision: c.revision, assessmentId: a.id, assessmentBinding: assessmentBinding(a), candidateBinding: a.candidateBinding, baseBinding: a.baseBinding };
+const tokens = Object.fromEntries(Object.entries(exact).map(([k, v]) => [k, k.endsWith('Binding') ? createHash('sha256').update(v).digest('hex') : v]));
+c = selectLcBasis(c, { ...exact, assertion: { ...assertion, selectForCoveredChecks: true, outsideCoverageReviewed: true }, asOf: c.asOf }).case;
+c.lcUpdateRequirements.draftingRequired = true;
+const selected = structuredClone(c);
+c = receive(c, 'exporter', 'We will send the corrected invoice on 2026-10-12.');
+const afterExporter = structuredClone(c);
+c = receive(c, 'carrier', 'We will reissue the B/L on 2026-10-16.');
+record(c, 'Orchestrator', 'Drafting failed after LC selection', 'Selected basis, current findings and validated correspondence retained. Retry with reassess after reviewing current evidence. No previous approval restored.');
+const failed = structuredClone(c);
+c = reassessSavedCorrespondence(c); c.lcUpdateRequirements.draftingRequired = false; c.status = 'approval';
+c.plan = { ...c.plan, summary: 'Synthetic recovered drafting strategy.', invoiceDraft: 'Synthetic recovered exporter draft.', carrierDraft: 'Synthetic recovered carrier draft.' };
+record(c, 'Counterparty coordinator', 'Request drafts ready', 'Isolated mocked recovery; fresh approval required.');
+const recovered = structuredClone(c);
+const fixture = { old, pending, selected, afterExporter, failed, recovered, tokens };
+writeFileSync(`${output}/lc-ui-fixtures.json`, JSON.stringify(fixture, null, 2));
+writeFileSync(`${output}/mock-setup.js`, `async (page) => {
+ const fixture = ${JSON.stringify(fixture)};
+ await page.context().addCookies([{name:'__sites_local_auth',value:'1',url:'http://127.0.0.1:5173'}]);
+ await page.unrouteAll({behavior:'ignoreErrors'});
+ await page.addInitScript(f => {
+  let current=f.pending; const realFetch=window.fetch.bind(window);window.__phase4MockCalls=[];
+  window.fetch=async (input,init) => {
+   const url=new URL(typeof input==='string'?input:input.url,location.href);let payload;
+   if(!url.pathname.startsWith('/api/cases'))return realFetch(input,init);
+   if(!init?.method||init.method==='GET') payload=url.pathname==='/api/cases'?{cases:[current],config:{model:true,neatlogs:true,modelName:'isolated mocked provider',liveReady:true}}:{case:current,lcAssessmentRequest:current.pendingLcAssessment?f.tokens:null,followUp:current.pendingLcAssessment?['select_or_dismiss_assessment']:current.lcUpdateRequirements?.draftingRequired?['retry_drafting']:['fresh_request_approval']};
+  else {const body=JSON.parse(init.body);window.__phase4MockCalls.push(body.type);
+   if(body.type==='select_lc') current=f.selected;
+   else if(body.type==='correspondence') current=body.sender==='exporter'?f.afterExporter:f.failed;
+   else if(body.type==='reassess') current=f.recovered;
+   else if(body.type==='stage_lc')return new Response(JSON.stringify({error:'Fresh investigation required: grounding against the exact current invoice, bl documents could not be established.',code:'fresh_investigation_required',freshInvestigationRequired:['invoice','bl']}),{status:400,headers:{'Content-Type':'application/json'}});
+   else throw new Error('Unexpected mocked action '+body.type);
+   payload={case:current,lcAssessmentRequest:null,followUp:current===f.selected?['confirm_current_timing','draft_correction_requests']:current===f.failed?['retry_drafting']:current===f.recovered?['fresh_request_approval']:['confirm_current_timing'],...(body.type==='select_lc'?{operation:{type:'select_lc',assessmentId:f.tokens.assessmentId,committedRevision:current.revision}}:{})};
+  }
+  window.__phase4MockState={lcVersion:current.docs[0].version,status:current.status,approval:!!current.approval,findings:current.findings.map(f=>f.id),pending:!!current.pendingLcAssessment};
+  return new Response(JSON.stringify(payload),{status:200,headers:{'Content-Type':'application/json'}});
+  };
+ },fixture);
+ await page.goto('http://127.0.0.1:5173/');
+ await page.getByRole('button',{name:'Open existing case',exact:true}).waitFor();
+}`);
+console.log('Generated isolated UI fixtures and route setup.');

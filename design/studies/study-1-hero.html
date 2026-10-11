@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Study 1 — hero</title>
+<link rel="stylesheet" href="tokens.css">
+<style>
+.wrap{max-width:1320px;margin:0 auto;padding:0 var(--s6)}
+/* A1 — top bar. No workspace rail here: four destinations mean nothing before a case exists. */
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand svg{width:26px;height:26px;display:block}
+.brand b{font-family:var(--serif);font-size:17px;font-weight:600;letter-spacing:-.01em}
+
+/* A2 — hero. Asymmetric: headline left, supporting + action right at mid-height (Harvey). */
+.hero{padding:var(--s9) 0 var(--s8)}
+.hero .grid{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(0,1fr);gap:var(--s8);align-items:center}
+h1{font-size:var(--display-1);font-weight:400;line-height:1.045;letter-spacing:-.021em;margin:0;max-width:14ch}
+.lede{font-size:var(--body);line-height:1.6;color:var(--mute);margin:0 0 var(--s5);max-width:46ch}
+.hero .note{display:flex;gap:9px;margin:var(--s5) 0 0;padding-top:var(--s4);border-top:1px solid var(--line);
+            font-size:14px;color:var(--faint);max-width:46ch;line-height:1.55}
+
+/* A2 — product frame. The real workspace, not an abstraction. */
+.frame{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);overflow:hidden;
+       box-shadow:0 1px 0 rgba(20,26,22,.03)}
+.fbar{display:flex;align-items:center;gap:var(--s3);padding:11px var(--s5);border-bottom:1px solid var(--line-soft);background:var(--sunk)}
+.fbar .t{font-family:var(--mono);font-size:12px;color:var(--faint)}
+.fbar .sp{flex:1}
+.fbody{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+.fleft{padding:var(--s6);border-right:1px solid var(--line-soft)}
+.fright{padding:var(--s6);background:var(--sunk)}
+.stage{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:var(--s5)}
+.stage span{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+.stage span.on{color:var(--ink);font-weight:500}
+.stage i{color:#c3ccc4;font-style:normal;font-size:11px}
+h2.act{font-size:var(--heading-1);font-weight:600;line-height:1.26;letter-spacing:-.013em;margin:0 0 var(--s3);max-width:26ch}
+.reason{font-size:var(--body-sm);color:var(--mute);margin:0 0 var(--s5);max-width:54ch;line-height:1.6}
+
+/* deadline strip — the distinctive moment, drawn not narrated.
+   Point labels sit above the line, date ticks below, so the two label bands never collide.
+   The window runs Oct 10-17 so no point lands on the clipping edge. */
+.axis{position:relative;height:82px;margin:var(--s4) 0 var(--s2)}
+.axis .line{position:absolute;left:0;right:0;top:46px;height:1px;background:var(--line)}
+.axis .tick{position:absolute;top:46px;width:1px;height:7px;background:#cfd8d1}
+.axis .tick b{position:absolute;top:11px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:10.5px;color:var(--faint);font-weight:400;white-space:nowrap}
+.axis .due{position:absolute;top:20px;height:33px;width:2px;background:var(--pine);border-radius:1px;transform:translateX(-50%)}
+.axis .pt{position:absolute;top:41px;width:11px;height:11px;border-radius:50%;background:var(--surface);
+          border:2px solid var(--pine);transform:translateX(-50%);z-index:2}
+.axis .pt.bad{border-color:var(--rust);background:var(--rust)}
+.axis .cap{position:absolute;top:0;font-family:var(--mono);font-size:10.5px;line-height:1.35;white-space:nowrap;color:var(--mute)}
+.axis .cap.bad{color:var(--rust);font-weight:500}
+.axis .cap.due{all:unset;position:absolute;top:0;font-family:var(--mono);font-size:10.5px;line-height:1.35;
+               white-space:nowrap;color:var(--pine);font-weight:500}
+.kv{display:grid;grid-template-columns:1fr auto;gap:9px var(--s4);align-items:baseline;margin-top:var(--s5);
+    padding-top:var(--s4);border-top:1px solid var(--line)}
+.kv dt{font-size:13.5px;color:var(--mute)}
+.kv dd{margin:0;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13.5px;font-weight:500}
+.kv dd.bad{color:var(--rust)}
+.fcap{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:var(--s4);line-height:1.6}
+.caption{display:flex;justify-content:space-between;align-items:baseline;gap:var(--s4);margin-top:var(--s3)}
+
+@media (max-width:900px){
+  .wrap{padding:0 var(--s4)}
+  .hero{padding:var(--s7) 0 var(--s6)}
+  .hero .grid{grid-template-columns:1fr;gap:var(--s5)}
+  h1{max-width:18ch}
+  .fbody{grid-template-columns:1fr}
+  .fleft{border-right:0;border-bottom:1px solid var(--line-soft)}
+  .fleft,.fright{padding:var(--s5)}
+  .axis .cap{font-size:9.5px}
+  .caption{flex-direction:column;gap:var(--s2)}
+}
+</style></head><body>
+
+<header class="bar"><div class="wrap">
+  <span class="brand">
+    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 4h18l14 14v24a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#0d3a2c"/><path d="M26 4l14 14H26z" fill="#5ba288"/><path d="M15 19h6v13h12v6H15z" fill="#fbfbf9"/></svg>
+    <b>LC Rescue Desk</b>
+  </span>
+  <button class="btn">Open a case</button>
+</div></header>
+
+<section class="hero"><div class="wrap"><div class="grid">
+  <h1>When trade documents disagree, know what to do next.</h1>
+  <div>
+    <p class="lede">LC Rescue Desk compares letters of credit, invoices, and bills of lading, links conflicts to source evidence, and updates correction plans as replies arrive—with human approval throughout.</p>
+    <button class="btn">Open a case</button>
+    <p class="note">Correction drafts stay inside the desk. Nothing is sent to a counterparty, and no outcome is certified.</p>
+  </div>
+</div></div></section>
+
+<div class="wrap">
+  <div class="frame">
+    <div class="fbar">
+      <span class="mono" style="font-size:12.5px;font-weight:500">LC-2026-1042</span>
+      <span class="chip attention">Specialist review required</span>
+      <span class="sp"></span>
+      <span class="t">Demo · no model calls</span>
+    </div>
+    <div class="fbody">
+      <div class="fleft">
+        <div class="stage">
+          <span>Investigate</span><i>›</i><span>Review plan</span><i>›</i><span class="on">Coordinate</span><i>›</i><span>Recheck</span><i>›</i><span>Reviewed</span>
+        </div>
+        <div class="label" style="margin-bottom:9px">Latest validated action</div>
+        <h2 class="act">Escalate to a trade specialist and clarify the carrier timeline and presentation options.</h2>
+        <p class="reason">The cited carrier B/L correction availability 2026-10-16 falls after the saved presentation deadline 2026-10-12.</p>
+        <div class="diff">
+          <div class="row required"><div class="gut">5</div><div class="key">LC requires</div><div class="val">consignee: TO ORDER OF MERIDIAN BANK</div></div>
+          <div class="row actual"><div class="gut">4</div><div class="key">Bill of lading says</div><div class="val">consignee: <mark>NORTHSTAR TRADING LTD</mark></div></div>
+        </div>
+      </div>
+      <div class="fright">
+        <div class="label" style="margin-bottom:var(--s2)">Deadline &amp; availability</div>
+        <div class="axis">
+          <div class="line"></div>
+          <div class="tick" style="left:0%"><b>Oct 10</b></div>
+          <div class="tick" style="left:28.6%"><b>Oct 12</b></div>
+          <div class="tick" style="left:57.1%"><b>Oct 14</b></div>
+          <div class="tick" style="left:85.7%"><b>Oct 16</b></div>
+          <div class="due" style="left:28.6%"></div>
+          <div class="cap due" style="left:0;">deadline 2026-10-12</div>
+          <div class="cap" style="left:28.6%;top:18px;transform:translateX(-50%)">invoice</div>
+          <div class="cap bad" style="right:0;text-align:right">B/L 2026-10-16 &mdash; 4 days late</div>
+          <div class="pt" style="left:28.6%"></div>
+          <div class="pt bad" style="left:85.7%"></div>
+        </div>
+        <dl class="kv">
+          <dt>Presentation deadline</dt><dd>2026-10-12</dd>
+          <dt>Invoice available</dt><dd>2026-10-12</dd>
+          <dt>B/L available</dt><dd class="bad">2026-10-16</dd>
+          <dt>Timing</dt><dd class="bad">conflict</dd>
+        </dl>
+        <p class="fcap">Issuer authenticity and bank acceptance remain unconfirmed.</p>
+      </div>
+    </div>
+  </div>
+  <div class="caption">
+    <span class="label">Study 1 · hero · not the production interface</span>
+    <span class="chip attention">Synthetic demo case · not a bank instrument</span>
+  </div>
+</div>
+
+<div style="height:var(--s8)"></div>
+</body></html>

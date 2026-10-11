@@ -1,0 +1,12 @@
+{
+  "provenance": "User readback excerpt from neatlogs trace fff98f8586ed89c6062dd9fdcd9ba058. Display omitted null/empty fields; explicit null dueDate and empty dependsOn added here solely to isolate the observed bad reference. This is not a raw trace export.",
+  "correspondenceId": "f736e541-6e59-4a1c-875f-9579909fa311",
+  "text": "Synthetic exporter: We will send the corrected invoice on 2026-10-12.",
+  "proposal": {
+    "actions": [
+      {"id":"a1","kind":"request_invoice","owner":"Exporter","dueDate":"2026-10-12","dependsOn":[],"evidenceRefs":["finding:invoice.currency","statement:f736e541-6e59-4a1c-875f-9579909fa311:s1"]},
+      {"id":"a2","kind":"human_escalation","owner":"Carrier","dueDate":null,"dependsOn":[],"evidenceRefs":["finding:bl.consignee"]},
+      {"id":"a3","kind":"clarify_timing","owner":"Carrier","dueDate":null,"dependsOn":[],"evidenceRefs":["missing:No supported carrier B/L availability date."]}
+    ]
+  }
+}

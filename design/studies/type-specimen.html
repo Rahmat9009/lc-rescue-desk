@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>LC Rescue — type specimen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,400&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ink:#141a16; --mute:#5d6b62; --faint:#8a988f; --line:#dfe4df; --paper:#fbfbf9;
+  --pine:#15503a; --rust:#8e3b2e; --rust-bg:#f9ece9; --ok:#1d6b45; --sage:#eef3ec;
+}
+*{box-sizing:border-box} html{-webkit-font-smoothing:antialiased}
+body{margin:0;background:#f2f2ef;color:var(--ink)}
+.page{max-width:1500px;margin:0 auto;padding:40px 32px 64px}
+h1.doc{font:600 15px/1.4 ui-sans-serif,system-ui;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin:0 0 6px}
+p.doc{font:400 14px/1.6 ui-sans-serif,system-ui;color:var(--mute);margin:0 0 28px;max-width:80ch}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.col{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.colhead{padding:16px 22px;border-bottom:1px solid var(--line);background:#fff}
+.colhead b{display:block;font:600 16px/1.3 ui-sans-serif,system-ui}
+.colhead span{display:block;font:400 13px/1.5 ui-sans-serif,system-ui;color:var(--mute);margin-top:3px}
+.row{padding:22px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.rowlbl{font:600 11px/1 ui-sans-serif,system-ui;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+
+/* ---------- Alternative A — Source Serif 4 + IBM Plex Mono ---------- */
+.A{--sans:"Source Serif 4",Georgia,serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+.A .hero{font-family:var(--sans);font-optical-sizing:auto;font-size:52px;line-height:1.06;font-weight:400;letter-spacing:-.018em;max-width:15ch}
+.A .wshead{font-family:var(--sans);font-size:26px;line-height:1.26;font-weight:600;letter-spacing:-.012em;max-width:30ch}
+.A .body{font-family:var(--sans);font-size:17px;line-height:1.62;font-weight:400;color:var(--mute);max-width:66ch}
+.A .lbl{font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);font-weight:500}
+.A .btn{font-family:var(--sans);font-size:16px;font-weight:600}
+.A .data{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:22px;font-weight:500;letter-spacing:-.01em}
+.A .quote{font-family:var(--mono);font-size:13.5px;line-height:1.75;color:var(--mute)}
+
+/* ---------- Alternative B — Archivo + IBM Plex Mono ---------- */
+.B{--sans:Archivo,ui-sans-serif,system-ui;--mono:"IBM Plex Mono",ui-monospace,monospace}
+.B .hero{font-family:var(--sans);font-size:50px;line-height:1.04;font-weight:600;letter-spacing:-.032em;max-width:15ch}
+.B .wshead{font-family:var(--sans);font-size:25px;line-height:1.28;font-weight:600;letter-spacing:-.02em;max-width:30ch}
+.B .body{font-family:var(--sans);font-size:16px;line-height:1.65;font-weight:400;color:var(--mute);max-width:70ch}
+.B .lbl{font-family:var(--sans);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.B .btn{font-family:var(--sans);font-size:15px;font-weight:600}
+.B .data{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:22px;font-weight:500;letter-spacing:-.01em}
+.B .quote{font-family:var(--mono);font-size:13.5px;line-height:1.75;color:var(--mute)}
+
+/* shared furniture */
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--pine);color:#fff;border:0;border-radius:7px;padding:11px 18px;min-height:42px}
+.btn.ghost{background:transparent;color:var(--pine);border:1px solid var(--line)}
+.field{margin-top:14px;max-width:340px}
+.field input{width:100%;margin-top:6px;padding:10px 12px;border:1px solid var(--line);border-radius:7px;background:#fff;font:inherit;font-size:15px;color:var(--ink)}
+.kv{display:grid;grid-template-columns:1fr auto;gap:7px 16px;max-width:380px;margin-top:14px;align-items:baseline}
+.kv dt{font-size:14px;color:var(--mute)}
+.kv dd{margin:0;text-align:right;font-variant-numeric:tabular-nums;font-weight:500}
+.conflict{color:var(--rust)}
+.diff{border:1px solid var(--line);border-radius:9px;overflow:hidden;margin-top:14px;background:#fff}
+.diff .r{display:grid;grid-template-columns:34px 150px 1fr;border-bottom:1px solid var(--line)}
+.diff .r:last-child{border-bottom:0}
+.diff .g{padding:9px 0;text-align:right;padding-right:10px;color:#b3bdb5;border-right:1px solid var(--line);background:#fafbfa}
+.diff .k{padding:9px 12px;color:var(--mute);border-right:1px solid var(--line)}
+.diff .v{padding:9px 12px;overflow-wrap:anywhere}
+.diff .r.bad{background:var(--rust-bg)}
+.diff .r.bad .v{color:var(--rust)}
+.diff mark{background:#f3cfc6;color:var(--rust);padding:0 3px;border-radius:2px}
+.diff .r.req .v{color:var(--pine)}
+.smalls{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.smalls .cap{font-size:11px;color:var(--faint);margin-bottom:8px;font-family:ui-sans-serif,system-ui}
+.mob{width:330px;border:1px solid var(--line);border-radius:9px;padding:14px;background:#fff}
+.mob .h{margin-bottom:8px}
+</style></head><body><div class="page">
+<h1 class="doc">LC Rescue Desk · typography alternatives · identical content</h1>
+<p class="doc">Both alternatives use two families only, both SIL OFL, both served from Google Fonts (availability and licence files verified 2026-10-11). Monospace is restricted to document content, quotations, dates and amounts — content whose alignment and character-level fidelity matter.</p>
+
+<div class="cols">
+
+<!-- ================= A ================= -->
+<div class="col A">
+  <div class="colhead"><b>Alternative A — “Instrument of record”</b><span>Source Serif 4 (all prose) + IBM Plex Mono (document content, data, labels)</span></div>
+
+  <div class="row"><div class="rowlbl">Hero headline</div>
+    <div class="hero">When trade documents disagree, know what to do next.</div></div>
+
+  <div class="row"><div class="rowlbl">Workspace heading</div>
+    <div class="wshead">Escalate to a trade specialist and clarify the carrier timeline and presentation options with the relevant parties.</div></div>
+
+  <div class="row"><div class="rowlbl">Recommendation &amp; correspondence paragraph</div>
+    <p class="body">The cited carrier B/L correction availability 2026-10-16 falls after the saved presentation deadline 2026-10-12. Availability on the presentation deadline does not establish time for document verification and presentation. Correspondence authenticity and actual issuance remain unverified. Bank extension, waiver, issuer confirmation, and successful presentation are unconfirmed.</p></div>
+
+  <div class="row"><div class="rowlbl">Buttons and field labels</div>
+    <button class="btn">Approve correction requests</button>
+    <button class="btn ghost" style="margin-left:8px">Reassess saved correspondence</button>
+    <div class="field"><span class="lbl">Presentation deadline</span><input value="2026-10-12" readonly></div></div>
+
+  <div class="row"><div class="rowlbl">Dates, amounts, document quotations</div>
+    <div class="data">2026-10-12</div>
+    <dl class="kv">
+      <dt>Invoice amount</dt><dd class="data" style="font-size:15px">48,000.00 EUR</dd>
+      <dt>LC ceiling</dt><dd class="data" style="font-size:15px">50,000.00 USD</dd>
+      <dt>B/L available</dt><dd class="data conflict" style="font-size:15px">2026-10-16</dd>
+    </dl>
+    <div class="diff">
+      <div class="r req"><div class="g">3</div><div class="k">LC requires</div><div class="v quote">currency: USD</div></div>
+      <div class="r bad"><div class="g">4</div><div class="k">Invoice says</div><div class="v quote">currency: <mark>EUR</mark></div></div>
+    </div>
+    <div class="smalls">
+      <div class="cap">Small screen — 330px</div>
+      <div class="mob"><div class="wshead h" style="font-size:19px">Escalate to a trade specialist and clarify the carrier timeline.</div>
+      <p class="body" style="font-size:15px;margin:0">The cited carrier B/L correction availability 2026-10-16 falls after the saved presentation deadline 2026-10-12.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= B ================= -->
+<div class="col B">
+  <div class="colhead"><b>Alternative B — “Operations console”</b><span>Archivo (all prose and UI) + IBM Plex Mono (document content, data)</span></div>
+
+  <div class="row"><div class="rowlbl">Hero headline</div>
+    <div class="hero">When trade documents disagree, know what to do next.</div></div>
+
+  <div class="row"><div class="rowlbl">Workspace heading</div>
+    <div class="wshead">Escalate to a trade specialist and clarify the carrier timeline and presentation options with the relevant parties.</div></div>
+
+  <div class="row"><div class="rowlbl">Recommendation &amp; correspondence paragraph</div>
+    <p class="body">The cited carrier B/L correction availability 2026-10-16 falls after the saved presentation deadline 2026-10-12. Availability on the presentation deadline does not establish time for document verification and presentation. Correspondence authenticity and actual issuance remain unverified. Bank extension, waiver, issuer confirmation, and successful presentation are unconfirmed.</p></div>
+
+  <div class="row"><div class="rowlbl">Buttons and field labels</div>
+    <button class="btn">Approve correction requests</button>
+    <button class="btn ghost" style="margin-left:8px">Reassess saved correspondence</button>
+    <div class="field"><span class="lbl">Presentation deadline</span><input value="2026-10-12" readonly></div></div>
+
+  <div class="row"><div class="rowlbl">Dates, amounts, document quotations</div>
+    <div class="data">2026-10-12</div>
+    <dl class="kv">
+      <dt>Invoice amount</dt><dd class="data" style="font-size:15px">48,000.00 EUR</dd>
+      <dt>LC ceiling</dt><dd class="data" style="font-size:15px">50,000.00 USD</dd>
+      <dt>B/L available</dt><dd class="data conflict" style="font-size:15px">2026-10-16</dd>
+    </dl>
+    <div class="diff">
+      <div class="r req"><div class="g">3</div><div class="k">LC requires</div><div class="v quote">currency: USD</div></div>
+      <div class="r bad"><div class="g">4</div><div class="k">Invoice says</div><div class="v quote">currency: <mark>EUR</mark></div></div>
+    </div>
+    <div class="smalls">
+      <div class="cap">Small screen — 330px</div>
+      <div class="mob"><div class="wshead h" style="font-size:19px">Escalate to a trade specialist and clarify the carrier timeline.</div>
+      <p class="body" style="font-size:15px;margin:0">The cited carrier B/L correction availability 2026-10-16 falls after the saved presentation deadline 2026-10-12.</p></div>
+    </div>
+  </div>
+</div>
+
+</div></div></body></html>

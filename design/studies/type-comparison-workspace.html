@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Type comparison — dense workspace content</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=Source+Sans+3:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+ --ink:#15201a;--mute:#4d5d53;--faint:#6d7f74;--line:#dde3dd;--soft:#eaefe8;
+ --paper:#fbfbf9;--surface:#fff;--sunk:#f3f6f2;
+ --pine:#144a36;--rust:#8a3528;--rust-bg:#f9eae6;--rust-mark:#f1c9c0;
+ --ochre:#7d5c14;--ochre-bg:#f8f1df;--ok:#1a6241;--ok-bg:#e7f0e9;
+ --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:#eef0ec;font-family:"Source Sans 3",system-ui,sans-serif;color:var(--ink)}
+.page{max-width:1620px;margin:0 auto;padding:28px 24px 56px}
+.intro{max-width:92ch;margin-bottom:22px}
+.intro h1{font:600 15px/1.4 "Source Sans 3",sans-serif;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);margin:0 0 6px}
+.intro p{font-size:14.5px;line-height:1.6;color:var(--mute);margin:0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+.col{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.colhead{padding:14px 20px;background:var(--surface);border-bottom:1px solid var(--line)}
+.colhead b{display:block;font:600 15px/1.3 "Source Sans 3",sans-serif}
+.colhead span{display:block;font-size:13px;color:var(--mute);margin-top:2px}
+
+/* ===== A: Source Serif 4 (all prose) + IBM Plex Mono ===== */
+.A{--head:"Source Serif 4",Georgia,serif; --body:"Source Serif 4",Georgia,serif; --ctl:"IBM Plex Mono",monospace}
+/* ===== C: Source Serif 4 headings + Source Sans 3 body/controls + IBM Plex Mono evidence ===== */
+.C{--head:"Source Serif 4",Georgia,serif; --body:"Source Sans 3",system-ui,sans-serif; --ctl:"Source Sans 3",system-ui,sans-serif}
+
+.ws{padding:0}
+.hd{padding:14px 20px;border-bottom:1px solid var(--line);background:var(--surface)}
+.hd .r1{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hd h2{font-family:var(--head);font-size:18px;font-weight:600;margin:0;letter-spacing:-.01em}
+.hd .sp{flex:1}
+.hd .r2{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--soft)}
+.stage{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.stage span{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+.stage span.on{color:var(--ink);font-weight:500;border-bottom:2px solid var(--pine);padding-bottom:1px}
+.stage i{color:#bcc7be;font-style:normal;font-size:11px}
+.chip{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:11.5px;font-weight:500;
+ border:1px solid var(--line);border-radius:5px;padding:3px 7px;color:var(--mute);background:var(--surface);white-space:nowrap}
+.chip.c{color:var(--rust);border-color:#e9cdc5;background:var(--rust-bg)}
+.chip.a{color:var(--ochre);border-color:#e6dbbd;background:var(--ochre-bg)}
+.chip.k{color:var(--ok);border-color:#cde0d3;background:var(--ok-bg)}
+.chip s{text-decoration:line-through;color:var(--faint)}
+
+.grid2{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:1px;background:var(--line)}
+.p{background:var(--surface);padding:20px}
+.p.alt{background:var(--sunk)}
+.lbl{font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);display:block;margin-bottom:8px}
+h3.act{font-family:var(--head);font-size:23px;font-weight:600;line-height:1.28;letter-spacing:-.012em;margin:0 0 10px;max-width:30ch}
+p.reason{font-family:var(--body);font-size:15px;line-height:1.6;color:var(--mute);margin:0 0 18px;max-width:62ch}
+.ev{margin-bottom:18px}
+.ev .q{display:grid;grid-template-columns:auto minmax(0,1fr);gap:11px;padding:8px 0;border-top:1px solid var(--soft);align-items:baseline}
+.ev .src{font-family:var(--mono);font-size:11px;color:var(--faint);white-space:nowrap}
+.ev .txt{font-family:var(--mono);font-size:13px;line-height:1.6;color:var(--mute)}
+ul.un{margin:0 0 18px;padding:0;list-style:none}
+ul.un li{font-family:var(--body);font-size:14.5px;color:var(--mute);padding:5px 0 5px 16px;position:relative;line-height:1.55;max-width:62ch}
+ul.un li::before{content:"";position:absolute;left:2px;top:13px;width:5px;height:1px;background:#bcc7be}
+.btn{display:inline-flex;align-items:center;font-family:var(--ctl);font-size:14px;font-weight:500;background:var(--pine);
+ color:#fff;border:1px solid var(--pine);border-radius:6px;padding:10px 16px;min-height:42px}
+.btn.g{background:transparent;color:var(--pine);border-color:var(--line)}
+.kv{display:grid;grid-template-columns:1fr auto;gap:8px 14px;align-items:baseline;margin:0}
+.kv dt{font-family:var(--body);font-size:13.5px;color:var(--mute)}
+.kv dd{margin:0;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:13.5px;font-weight:500}
+.kv dd.bad{color:var(--rust)} .kv dd.non{color:var(--faint);font-weight:400}
+.diff{border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:14px;background:var(--surface)}
+.diff .r{display:grid;grid-template-columns:34px 150px minmax(0,1fr);border-bottom:1px solid var(--soft)}
+.diff .r:last-child{border-bottom:0}
+.diff .g{font-family:var(--mono);font-size:11.5px;color:#a9b4ab;text-align:right;padding:9px 9px 9px 0;border-right:1px solid var(--soft);background:var(--sunk)}
+.diff .k{font-family:var(--body);font-size:13.5px;color:var(--mute);padding:9px 11px;border-right:1px solid var(--soft)}
+.diff .v{font-family:var(--mono);font-size:13px;line-height:1.65;padding:9px 11px;overflow-wrap:anywhere}
+.diff .r.req .v{color:var(--pine)} .diff .r.act{background:var(--rust-bg)} .diff .r.act .v{color:var(--rust)}
+.diff .r.act .g{background:#f4ded8;color:#bc968d}
+.diff mark{background:var(--rust-mark);color:var(--rust);padding:0 3px;border-radius:2px}
+.hist{padding:18px 20px;border-top:1px solid var(--line);background:var(--surface)}
+.ep{display:grid;grid-template-columns:70px minmax(0,1fr);gap:14px;padding:11px 0;border-bottom:1px solid var(--soft)}
+.ep:last-child{border-bottom:0}
+.ep time{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+.ep b{display:block;font-family:var(--body);font-size:14px;font-weight:600;margin-bottom:6px}
+.ep .cs{display:flex;gap:6px;flex-wrap:wrap}
+.ep .sub{font-family:var(--body);font-size:13px;color:var(--mute);margin-top:6px}
+.fld{margin-top:12px}
+.fld label{display:block;font-family:var(--ctl);font-size:13px;font-weight:600;margin-bottom:5px}
+.fld input{width:100%;font-family:var(--ctl);font-size:14px;padding:9px 11px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+</style></head><body><div class="page">
+<div class="intro"><h1>Dense workspace content · identical in both columns</h1>
+<p>Requirement 7: compare the proposed treatment against one using serif headings with a readable sans for body and controls, judged on real dense workspace content rather than a hero. Both columns use IBM Plex Mono for evidence, dates and amounts.</p></div>
+
+<div class="cols">
+
+<!-- ============ A ============ -->
+<div class="col A"><div class="colhead"><b>A — serif prose throughout</b><span>Source Serif 4 (headings + body) · IBM Plex Mono (evidence, labels, controls)</span></div>
+<div class="ws">
+  <div class="hd">
+    <div class="r1"><h2>LC-2026-1042</h2><span class="chip">Demo · no model calls</span><span class="sp"></span><span class="chip">LC v1</span><span class="chip">INV v1</span><span class="chip">B/L v1</span></div>
+    <div class="r2"><div class="stage"><span>Investigate</span><i>›</i><span>Review plan</span><i>›</i><span class="on">Coordinate</span><i>›</i><span>Recheck</span><i>›</i><span>Reviewed</span></div><span class="sp"></span><span class="chip c">2 findings</span><span class="chip a">2 days to deadline</span></div>
+  </div>
+  <div class="grid2">
+    <div class="p">
+      <span class="lbl">Latest validated action</span>
+      <h3 class="act">Escalate to a trade specialist and clarify the carrier timeline and presentation options with the relevant parties.</h3>
+      <p class="reason">The cited carrier B/L correction availability 2026-10-16 falls after the saved presentation deadline 2026-10-12.</p>
+      <span class="lbl">Supporting evidence</span>
+      <div class="ev">
+        <div class="q"><span class="src">case · deadline</span><span class="txt">Saved presentation deadline: 2026-10-12</span></div>
+        <div class="q"><span class="src">carrier · 10-11</span><span class="txt">“We can reissue the corrected B/L on 2026-10-16.”</span></div>
+      </div>
+      <span class="lbl">Unresolved</span>
+      <ul class="un">
+        <li>Availability on the presentation deadline does not establish time for document verification and presentation.</li>
+        <li>Correspondence authenticity and actual issuance remain unverified.</li>
+        <li>Bank extension, waiver, issuer confirmation, and successful presentation are unconfirmed.</li>
+      </ul>
+      <button class="btn g">Reassess saved correspondence</button>
+      <div class="fld"><label>Presentation deadline</label><input value="2026-10-12" readonly></div>
+      <div class="diff">
+        <div class="r req"><div class="g">3</div><div class="k">LC requires</div><div class="v">currency: USD</div></div>
+        <div class="r act"><div class="g">4</div><div class="k">Invoice states</div><div class="v">currency: <mark>EUR</mark></div></div>
+      </div>
+    </div>
+    <div class="p alt">
+      <span class="lbl">Deadline &amp; availability</span>
+      <dl class="kv">
+        <dt>Case date</dt><dd>2026-10-10</dd>
+        <dt>Presentation deadline</dt><dd>2026-10-12</dd>
+        <dt>Invoice reported available</dt><dd>2026-10-12</dd>
+        <dt>B/L reported available</dt><dd class="bad">2026-10-16</dd>
+        <dt>Bank extension</dt><dd class="non">Not established</dd>
+        <dt>Timing</dt><dd class="bad">conflict</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="hist">
+    <span class="lbl">History</span>
+    <div class="ep"><time>10-11 04:57</time><div><b>Remedy planner revised the plan · 12 revisions</b>
+      <div class="cs"><span class="chip c">timing <s>unknown</s> → conflict</span><span class="chip">next action <s>approve</s> → escalate</span><span class="chip a">approval invalidated</span></div>
+      <div class="sub">Grouped by material plan fields. View full revision for any entry.</div></div></div>
+  </div>
+</div></div>
+
+<!-- ============ C ============ -->
+<div class="col C"><div class="colhead"><b>C — serif headings, sans body and controls</b><span>Source Serif 4 (headings) · Source Sans 3 (body, controls) · IBM Plex Mono (evidence)</span></div>
+<div class="ws">
+  <div class="hd">
+    <div class="r1"><h2>LC-2026-1042</h2><span class="chip">Demo · no model calls</span><span class="sp"></span><span class="chip">LC v1</span><span class="chip">INV v1</span><span class="chip">B/L v1</span></div>
+    <div class="r2"><div class="stage"><span>Investigate</span><i>›</i><span>Review plan</span><i>›</i><span class="on">Coordinate</span><i>›</i><span>Recheck</span><i>›</i><span>Reviewed</span></div><span class="sp"></span><span class="chip c">2 findings</span><span class="chip a">2 days to deadline</span></div>
+  </div>
+  <div class="grid2">
+    <div class="p">
+      <span class="lbl">Latest validated action</span>
+      <h3 class="act">Escalate to a trade specialist and clarify the carrier timeline and presentation options with the relevant parties.</h3>
+      <p class="reason">The cited carrier B/L correction availability 2026-10-16 falls after the saved presentation deadline 2026-10-12.</p>
+      <span class="lbl">Supporting evidence</span>
+      <div class="ev">
+        <div class="q"><span class="src">case · deadline</span><span class="txt">Saved presentation deadline: 2026-10-12</span></div>
+        <div class="q"><span class="src">carrier · 10-11</span><span class="txt">“We can reissue the corrected B/L on 2026-10-16.”</span></div>
+      </div>
+      <span class="lbl">Unresolved</span>
+      <ul class="un">
+        <li>Availability on the presentation deadline does not establish time for document verification and presentation.</li>
+        <li>Correspondence authenticity and actual issuance remain unverified.</li>
+        <li>Bank extension, waiver, issuer confirmation, and successful presentation are unconfirmed.</li>
+      </ul>
+      <button class="btn g">Reassess saved correspondence</button>
+      <div class="fld"><label>Presentation deadline</label><input value="2026-10-12" readonly></div>
+      <div class="diff">
+        <div class="r req"><div class="g">3</div><div class="k">LC requires</div><div class="v">currency: USD</div></div>
+        <div class="r act"><div class="g">4</div><div class="k">Invoice states</div><div class="v">currency: <mark>EUR</mark></div></div>
+      </div>
+    </div>
+    <div class="p alt">
+      <span class="lbl">Deadline &amp; availability</span>
+      <dl class="kv">
+        <dt>Case date</dt><dd>2026-10-10</dd>
+        <dt>Presentation deadline</dt><dd>2026-10-12</dd>
+        <dt>Invoice reported available</dt><dd>2026-10-12</dd>
+        <dt>B/L reported available</dt><dd class="bad">2026-10-16</dd>
+        <dt>Bank extension</dt><dd class="non">Not established</dd>
+        <dt>Timing</dt><dd class="bad">conflict</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="hist">
+    <span class="lbl">History</span>
+    <div class="ep"><time>10-11 04:57</time><div><b>Remedy planner revised the plan · 12 revisions</b>
+      <div class="cs"><span class="chip c">timing <s>unknown</s> → conflict</span><span class="chip">next action <s>approve</s> → escalate</span><span class="chip a">approval invalidated</span></div>
+      <div class="sub">Grouped by material plan fields. View full revision for any entry.</div></div></div>
+  </div>
+</div></div>
+
+</div></div></body></html>

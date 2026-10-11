@@ -4,10 +4,12 @@ export type Doc = { kind: Kind; name: string; text: string; version: number; syn
 export type Finding = { id: string; doc: Kind; field: string; title: string; expected: string; actual: string; quote: string; owner: string; severity: "blocker" | "review" };
 export type Fields = Record<string, { value: string; quote: string }>;
 export type Event = { at: string; actor: string; title: string; detail: string; run?: string };
-export type Plan = { summary: string; invoiceDraft: string; carrierDraft: string; earliestDate: string; assumption: string };
+export type Plan = { summary: string; invoiceDraft: string; carrierDraft: string; earliestDate: string; assumption: string; documentVersions?:string };
 export type ReplyAssessment = { facts: string[]; assumptions: string[]; unconfirmed: string[]; nextHumanAction: string };
-import type { Correspondence, Statement, RecoveryPlan, PlanHistory, Sender } from './recovery';
-export type Case = { id: string; revision: number; mode: Mode; status: "new"|"approval"|"waiting"|"received"|"reviewed"|"stopped"; asOf: string; docs: Doc[]; history: Doc[]; fields: Partial<Record<Kind, Fields>>; findings: Finding[]; events: Event[]; deadline?: string; plan?: Plan; approval?: { revision: number; documentVersions: string; at: string; planId?:string }; replyAssessment?: ReplyAssessment; correspondence?:Correspondence[]; statements?:Statement[]; priorAssessments?:{at:string; statements:Statement[]}[]; recoveryPlan?:RecoveryPlan; planHistory?:PlanHistory[]; evidence: { neatlogs: string; entire: string; checkpoint: string; business: string }; modelRuns: number; usage: { input: number; output: number; missing:number }; createdAt: string };
+import type { Correspondence, Statement, RecoveryPlan, PlanHistory, PlanningFailure, Sender } from './recovery';
+import type { LcAssessment, LcAssessmentAudit, LcRequirements } from './lc-updates';
+import type { ExtractionRecord } from './source-grounding';
+export type Case = { id: string; revision: number; mode: Mode; status: "new"|"approval"|"waiting"|"received"|"reviewed"|"stopped"; asOf: string; docs: Doc[]; history: Doc[]; fields: Partial<Record<Kind, Fields>>; extractionHistory?:ExtractionRecord[]; planningFailures?:PlanningFailure[]; findings: Finding[]; events: Event[]; deadline?: string; plan?: Plan; approval?: { revision: number; documentVersions: string; at: string; planId?:string }; replyAssessment?: ReplyAssessment; correspondence?:Correspondence[]; statements?:Statement[]; priorAssessments?:{at:string; statements:Statement[]}[]; recoveryPlan?:RecoveryPlan; planHistory?:PlanHistory[]; pendingLcAssessment?:LcAssessment; lcAssessmentHistory?:LcAssessmentAudit[]; lcUpdateRequirements?:LcRequirements; evidence: { neatlogs: string; entire: string; checkpoint: string; business: string }; modelRuns: number; modelAttempts?:number; usage: { input: number; output: number; missing:number }; createdAt: string };
 export const labels: Record<Kind,string> = { lc: "Letter of credit", invoice: "Commercial invoice", bl: "Bill of lading" };
 export const required: Record<Kind,string[]> = { lc: ["reference","currency","max_amount","consignee","latest_shipment","expiry","presentation_days"], invoice: ["reference","lc_reference","currency","amount"], bl: ["reference","lc_reference","consignee","shipment_date"] };
 export class CaseError extends Error { status:number; constructor(message: string, status = 400) { super(message); this.status=status; } }
@@ -54,22 +56,43 @@ export function validate(c: Case): Finding[] {
  c.deadline=undefined;if(dateOK(v("bl","shipment_date"))&&dateOK(v("lc","expiry"))&&Number.isInteger(days)&&days>0&&days<=365){c.deadline=[plusDays(v("bl","shipment_date"),days),v("lc","expiry")].sort()[0];if(c.asOf>c.deadline)add("lc","expiry","Calculated presentation deadline passed",c.deadline,c.asOf);}return findings;
 }
 export function basePlan(c:Case): Plan {return {summary:"Request an exporter-issued invoice correction and a carrier-issued B/L reissue. Keep originals and verify each received version.",invoiceDraft:`Draft to exporter: please review ${c.docs.find(d=>d.kind==="invoice")?.name}. ${c.findings.filter(f=>f.doc==="invoice").map(f=>`${f.field}: source says ${f.actual}; LC requires ${f.expected}.`).join(" ")} Provide a new issued version.`,carrierDraft:`Draft to carrier: please review ${c.docs.find(d=>d.kind==="bl")?.name}. ${c.findings.filter(f=>f.doc==="bl").map(f=>`${f.field}: source says ${f.actual}; explicit LC instruction is ${f.expected}.`).join(" ")} Confirm earliest reissue availability. No message has been sent.`,earliestDate:plusDays(c.asOf,1),assumption:"Next-day turnaround assumption, not a carrier commitment. Bank closures and presentation location are not evaluated."};}
-export function finishInvestigation(c:Case) {c.findings=validate(c);if(c.findings.length===0){c.status="reviewed";record(c,"Verifier","Covered checks passed","Only implemented checks passed. Full bank examination remains required.");}else if(c.findings.some(f=>f.severity==="review" || ["expiry","shipment_date","lc_reference"].includes(f.field))){c.status="stopped";record(c,"Verifier","Specialist review required","Missing evidence, deadline, numeric or reference issue exceeds the supported correction path.");}else {c.status="approval";c.plan=basePlan(c);record(c,"Remedy planner","Correction plan ready",`${c.findings.length} issue(s). Human approval required before opening correction requests.`);}}
+export function lcFollowUpBlocked(c:Case):boolean {return !!(c.lcUpdateRequirements&&(c.lcUpdateRequirements.documentVersions!==documentVersions(c)||c.lcUpdateRequirements.timingConfirmationRequired||c.lcUpdateRequirements.outsideCoverageUnresolved||c.lcUpdateRequirements.specialistReviewRequired||c.lcUpdateRequirements.draftingRequired));}
+export function finishInvestigation(c:Case) {
+ if(c.pendingLcAssessment)throw new CaseError("Select or dismiss the pending LC assessment before investigation.");
+ c.findings=validate(c);
+ if(c.lcUpdateRequirements&&c.lcUpdateRequirements.documentVersions===documentVersions(c)&&!c.findings.length)c.lcUpdateRequirements.timingConfirmationRequired=false;
+ if(lcFollowUpBlocked(c)){
+  c.status="stopped";c.approval=undefined;
+  if(c.findings.length&&!c.findings.some(f=>f.severity==="review"||["expiry","shipment_date","lc_reference"].includes(f.field)))c.plan={...basePlan(c),documentVersions:documentVersions(c)};
+  record(c,"Verifier","LC basis follow-up required","Current timing or specialist review remains unresolved after LC selection.");
+ }else if(c.findings.length===0){c.status="reviewed";record(c,"Verifier","Covered checks passed","Only implemented checks passed. Full bank examination remains required.");}
+ else if(c.findings.some(f=>f.severity==="review" || ["expiry","shipment_date","lc_reference"].includes(f.field))){c.status="stopped";record(c,"Verifier","Specialist review required","Missing evidence, deadline, numeric or reference issue exceeds the supported correction path.");}
+ else {c.status="approval";c.plan=basePlan(c);record(c,"Remedy planner","Correction plan ready",`${c.findings.length} issue(s). Human approval required before opening correction requests.`);}
+}
 export type Action = {type:"investigate"|"approve"|"reply"|"recheck"|"evidence"|"correspondence"|"reassess"; revision:number; reply?:"available"|"delayed"|"waiver"; docs?:Doc[]; evidence?:Case["evidence"]; sender?:Sender; text?:string};
 export function replyEvidence(c:Case,a:Action) {
  return {replyScenario:a.reply,resultingStatus:c.status,calculatedDeadline:c.deadline??null,earliestAvailability:c.plan?.earliestDate??null,invoiceVersion:c.docs.find(d=>d.kind==="invoice")!.version,blVersion:c.docs.find(d=>d.kind==="bl")!.version,documentsReceived:c.status==="received"};
 }
+/** Code-controlled receipt facts and unverified flags. The coordinator may not
+ * infer a schedule, authenticity, amendment acceptance or bank approval. */
+export function replyCoordinatorFields(c:Case,a:Action) {
+ return {...replyEvidence(c,a),timelineBasis:"assumption",carrierCommitment:"unconfirmed",issuerAuthenticity:"unconfirmed",bankAcceptance:"unconfirmed",nextHumanAction:c.status==="received"?"recheck":"specialist_review"};
+}
 export function validateReplyAssessment(c:Case,a:Action,raw:unknown):ReplyAssessment {
  if(a.type!=="reply" || !a.reply || !c.plan || !raw || typeof raw!=="object" || Array.isArray(raw))throw new CaseError("Coordinator output invalid.",502);
- const expected={...replyEvidence(c,a),timelineBasis:"assumption",carrierCommitment:"unconfirmed",issuerAuthenticity:"unconfirmed",bankAcceptance:"unconfirmed",nextHumanAction:c.status==="received"?"recheck":"specialist_review"};
+ const expected=replyCoordinatorFields(c,a);
  const output=raw as Record<string,unknown>;
- if(Object.keys(output).length!==Object.keys(expected).length || Object.entries(expected).some(([key,value])=>output[key]!==value))throw new CaseError("Coordinator claims do not match case evidence or mark assumptions and unconfirmed commitments correctly.",502);
+ const mismatches=Object.entries(expected).filter(([key,value])=>output[key]!==value).map(([key])=>key);
+ const extraFields=Object.keys(output).filter(key=>!Object.hasOwn(expected,key)).length;
+ if(mismatches.length||extraFields)throw new CaseError(`Coordinator claims do not match case evidence or mark assumptions and unconfirmed commitments correctly. Mismatched or missing fields: ${mismatches.join(', ')||'none'}. Unsupported extra fields: ${extraFields}.`,502);
  const facts=[`Simulated ${a.reply} reply scenario recorded.`,`Calculated presentation deadline from supported document fields: ${c.deadline??"not established"}.`];
  if(c.status==="received")facts.push(`User-uploaded invoice v${expected.invoiceVersion} and B/L v${expected.blVersion} are retained for recheck; issuer authenticity is not established.`);
  return {facts,assumptions:[`Earliest availability ${c.plan.earliestDate} is a planning assumption, not a scheduled carrier timeline.`],unconfirmed:["No verified carrier commitment or processing schedule is supplied.","Issuer authenticity and issuing-bank acceptance remain unconfirmed."],nextHumanAction:c.status==="received"?"Recheck the revised documents, then arrange full trade and bank presentation review.":a.reply==="waiver"?"Ask a trade specialist and issuing bank to review the waiver before proceeding.":"Escalate timing to a trade specialist and confirm the carrier's actual availability before proceeding."};
 }
 export function transition(c:Case,a:Action): Case {
  if(a.revision!==c.revision)throw new CaseError("Case changed. Refresh before continuing.",409);const n=structuredClone(c);
+ if((a.type==="approve"||a.type==="reply")&&(n.pendingLcAssessment||lcFollowUpBlocked(n)))throw new CaseError("Select or dismiss the pending LC assessment and complete LC basis follow-up before authorizing corrections.");
+ if((a.type==="approve"||a.type==="reply")&&n.plan?.documentVersions&&n.plan.documentVersions!==documentVersions(n))throw new CaseError("A plan matching the current document versions is required.");
  if(a.type==="approve"){
   if(n.status!=="approval" || !n.plan)throw new CaseError("A reviewed correction plan is required.");n.approval={revision:n.revision,documentVersions:documentVersions(n),at:new Date().toISOString(),...(n.recoveryPlan?{planId:n.recoveryPlan.id}:{})};n.status="waiting";record(n,"Human reviewer","Correction requests approved","Approval binds these document versions and the current recovery plan. Requests recorded internally; no external messages sent.");
  }else if(a.type==="reply"){
@@ -82,6 +105,12 @@ export function transition(c:Case,a:Action): Case {
    n.docs=n.docs.map(d=>{if(d.kind==="lc")return d;let text=d.text;for(const f of n.findings.filter(f=>f.doc===d.kind))text=text.replace(new RegExp(`^${f.field}:.*$`,"m"),`${f.field}: ${f.expected}`);return {...d,text,version:d.version+1,name:d.name.replace(/v\d+/,`v${d.version+1}`),synthetic:true};});n.history.push(...n.docs.filter(d=>d.kind!=="lc").map(d=>structuredClone(d)));n.status="received";record(n,"Counterparty coordinator","Synthetic revised documents received","Fixture invoice and B/L version 2. Recheck required.");
   }else{
    if(!a.docs||a.docs.length!==2||new Set(a.docs.map(d=>d.kind)).size!==2||a.docs.some(d=>!['invoice','bl'].includes(d.kind)||!d.text.trim()||d.text.length>16000))throw new CaseError("Upload both revised text-native invoice and B/L.");n.docs=n.docs.map(d=>{const r=a.docs!.find(r=>r.kind===d.kind);return r?{...r,version:d.version+1,synthetic:false}:d;});n.history.push(...n.docs.filter(d=>d.kind!=="lc").map(d=>structuredClone(d)));n.status="received";record(n,"Counterparty coordinator","Revised documents uploaded","User-provided documents. Issuer authenticity unverified. Recheck required.");
+  }
+  if(n.status==="received"&&n.lcUpdateRequirements){
+   if(n.recoveryPlan)n.planHistory=[...(n.planHistory||[]),{plan:structuredClone(n.recoveryPlan),approval:structuredClone(n.approval),at:new Date().toISOString()}];
+   if(n.statements?.length)n.priorAssessments=[...(n.priorAssessments||[]),{at:new Date().toISOString(),statements:structuredClone(n.statements)}];
+   n.recoveryPlan=undefined;n.approval=undefined;n.statements=[];
+   n.lcUpdateRequirements.documentVersions=documentVersions(n);n.lcUpdateRequirements.timingConfirmationRequired=true;
   }
  }else if(a.type==="evidence"){
   if(!a.evidence)throw new CaseError("Evidence fields required.");for(const key of ["neatlogs","entire","business"] as const){const u=a.evidence[key];if(typeof u!=="string" || u && (!/^https:\/\//.test(u)||u.length>1000))throw new CaseError("Use HTTPS evidence links under 1,000 characters.");}if(typeof a.evidence.checkpoint!=="string"||a.evidence.checkpoint.length>200)throw new CaseError("Checkpoint ID is too long.");n.evidence={...a.evidence};record(n,"Team","Sponsor evidence saved","User-supplied links; accessibility and contents need manual verification.");

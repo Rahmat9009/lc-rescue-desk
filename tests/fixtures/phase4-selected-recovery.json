@@ -1,0 +1,1627 @@
+{
+  "id": "c931202a-076f-4ea1-b661-41685c9a33c9",
+  "revision": 5,
+  "mode": "live",
+  "status": "stopped",
+  "asOf": "2026-10-11",
+  "docs": [
+    {
+      "kind": "lc",
+      "name": "PHASE4-VERIFY-20261011-174225-LC-v2.txt",
+      "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-21\npresentation_days: 21",
+      "version": 2,
+      "synthetic": false
+    },
+    {
+      "kind": "invoice",
+      "name": "PHASE4-VERIFY-20261011-174225-INV-v1.txt",
+      "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\nreference: PHASE4-VERIFY-20261011-174225-INV\nlc_reference: PHASE4-VERIFY-20261011-174225\ncurrency: EUR\namount: 48000",
+      "version": 1,
+      "synthetic": false
+    },
+    {
+      "kind": "bl",
+      "name": "PHASE4-VERIFY-20261011-174225-BL-v1.txt",
+      "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\nreference: PHASE4-VERIFY-20261011-174225-BL\nlc_reference: PHASE4-VERIFY-20261011-174225\nconsignee: SYNTHETIC BUYER LTD\nshipment_date: 2026-10-11",
+      "version": 1,
+      "synthetic": false
+    }
+  ],
+  "history": [
+    {
+      "kind": "lc",
+      "name": "PHASE4-VERIFY-20261011-174225-LC-v1.txt",
+      "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-15\npresentation_days: 21",
+      "version": 1,
+      "synthetic": false
+    },
+    {
+      "kind": "invoice",
+      "name": "PHASE4-VERIFY-20261011-174225-INV-v1.txt",
+      "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\nreference: PHASE4-VERIFY-20261011-174225-INV\nlc_reference: PHASE4-VERIFY-20261011-174225\ncurrency: EUR\namount: 48000",
+      "version": 1,
+      "synthetic": false
+    },
+    {
+      "kind": "bl",
+      "name": "PHASE4-VERIFY-20261011-174225-BL-v1.txt",
+      "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\nreference: PHASE4-VERIFY-20261011-174225-BL\nlc_reference: PHASE4-VERIFY-20261011-174225\nconsignee: SYNTHETIC BUYER LTD\nshipment_date: 2026-10-11",
+      "version": 1,
+      "synthetic": false
+    },
+    {
+      "kind": "lc",
+      "name": "PHASE4-VERIFY-20261011-174225-LC-v2.txt",
+      "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-21\npresentation_days: 21",
+      "version": 2,
+      "synthetic": false
+    }
+  ],
+  "fields": {
+    "lc": {
+      "reference": {
+        "value": "PHASE4-VERIFY-20261011-174225",
+        "quote": "reference: PHASE4-VERIFY-20261011-174225"
+      },
+      "currency": {
+        "value": "USD",
+        "quote": "currency: USD"
+      },
+      "max_amount": {
+        "value": "50000",
+        "quote": "max_amount: 50000"
+      },
+      "consignee": {
+        "value": "TO ORDER OF SYNTHETIC TEST BANK",
+        "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+      },
+      "latest_shipment": {
+        "value": "2026-10-12",
+        "quote": "latest_shipment: 2026-10-12"
+      },
+      "expiry": {
+        "value": "2026-10-21",
+        "quote": "expiry: 2026-10-21"
+      },
+      "presentation_days": {
+        "value": "21",
+        "quote": "presentation_days: 21"
+      }
+    },
+    "invoice": {
+      "reference": {
+        "value": "PHASE4-VERIFY-20261011-174225-INV",
+        "quote": "reference: PHASE4-VERIFY-20261011-174225-INV"
+      },
+      "lc_reference": {
+        "value": "PHASE4-VERIFY-20261011-174225",
+        "quote": "lc_reference: PHASE4-VERIFY-20261011-174225"
+      },
+      "currency": {
+        "value": "EUR",
+        "quote": "currency: EUR"
+      },
+      "amount": {
+        "value": "48000",
+        "quote": "amount: 48000"
+      }
+    },
+    "bl": {
+      "reference": {
+        "value": "PHASE4-VERIFY-20261011-174225-BL",
+        "quote": "reference: PHASE4-VERIFY-20261011-174225-BL"
+      },
+      "lc_reference": {
+        "value": "PHASE4-VERIFY-20261011-174225",
+        "quote": "lc_reference: PHASE4-VERIFY-20261011-174225"
+      },
+      "consignee": {
+        "value": "SYNTHETIC BUYER LTD",
+        "quote": "consignee: SYNTHETIC BUYER LTD"
+      },
+      "shipment_date": {
+        "value": "2026-10-11",
+        "quote": "shipment_date: 2026-10-11"
+      }
+    }
+  },
+  "findings": [
+    {
+      "id": "invoice.currency",
+      "doc": "invoice",
+      "field": "currency",
+      "title": "Invoice currency conflicts",
+      "expected": "USD",
+      "actual": "EUR",
+      "quote": "currency: EUR",
+      "owner": "Exporter",
+      "severity": "blocker"
+    },
+    {
+      "id": "bl.consignee",
+      "doc": "bl",
+      "field": "consignee",
+      "title": "Consignee conflicts with explicit LC instruction",
+      "expected": "TO ORDER OF SYNTHETIC TEST BANK",
+      "actual": "SYNTHETIC BUYER LTD",
+      "quote": "consignee: SYNTHETIC BUYER LTD",
+      "owner": "Carrier",
+      "severity": "blocker"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-11T17:42:25.697Z",
+      "actor": "Desk",
+      "title": "Case opened",
+      "detail": "Text documents will be sent to the configured model and neatlogs."
+    },
+    {
+      "at": "2026-10-11T17:42:25.743Z",
+      "actor": "Orchestrator",
+      "title": "Live run started",
+      "detail": "Live model execution. The application trace ID will be recorded only if neatlogs accepts the complete run.",
+      "run": "2e69811b-9943-403d-8325-f9308d80414e"
+    },
+    {
+      "at": "2026-10-11T17:42:31.443Z",
+      "actor": "LC investigator",
+      "title": "Source evidence extracted",
+      "detail": "Quoted fields checked against document v1.",
+      "run": "2e69811b-9943-403d-8325-f9308d80414e"
+    },
+    {
+      "at": "2026-10-11T17:42:31.443Z",
+      "actor": "INVOICE investigator",
+      "title": "Source evidence extracted",
+      "detail": "Quoted fields checked against document v1.",
+      "run": "2e69811b-9943-403d-8325-f9308d80414e"
+    },
+    {
+      "at": "2026-10-11T17:42:31.443Z",
+      "actor": "BL investigator",
+      "title": "Source evidence extracted",
+      "detail": "Quoted fields checked against document v1.",
+      "run": "2e69811b-9943-403d-8325-f9308d80414e"
+    },
+    {
+      "at": "2026-10-11T17:42:31.448Z",
+      "actor": "Remedy planner",
+      "title": "Correction plan ready",
+      "detail": "2 issue(s). Human approval required before opening correction requests."
+    },
+    {
+      "at": "2026-10-11T17:42:37.137Z",
+      "actor": "Counterparty coordinator",
+      "title": "Request drafts ready",
+      "detail": "Human review required. No external communication performed.",
+      "run": "2e69811b-9943-403d-8325-f9308d80414e"
+    },
+    {
+      "at": "2026-10-11T17:42:38.174Z",
+      "actor": "Telemetry",
+      "title": "Trace accepted",
+      "detail": "Neatlogs trace ID b8041a229683335372f45ab35c804497; 13 spans acknowledged for 12 submitted nodes; 6005 UTF-8 bytes. Persisted payload and dashboard finalization still require readback.",
+      "run": "2e69811b-9943-403d-8325-f9308d80414e"
+    },
+    {
+      "at": "2026-10-11T17:42:38.246Z",
+      "actor": "Orchestrator",
+      "title": "Live run started",
+      "detail": "Live model execution. The application trace ID will be recorded only if neatlogs accepts the complete run.",
+      "run": "a16ade5f-ec9a-495c-becf-55755912a630"
+    },
+    {
+      "at": "2026-10-11T17:42:46.443Z",
+      "actor": "Orchestrator",
+      "title": "Live action failed",
+      "detail": "Remedy action has an unsupported date or evidence reference.",
+      "run": "a16ade5f-ec9a-495c-becf-55755912a630"
+    },
+    {
+      "at": "2026-10-11T17:42:47.225Z",
+      "actor": "Telemetry",
+      "title": "Trace accepted",
+      "detail": "Neatlogs trace ID fff98f8586ed89c6062dd9fdcd9ba058; 6 spans acknowledged for 5 submitted nodes; 2367 UTF-8 bytes. Persisted payload and dashboard finalization still require readback.",
+      "run": "a16ade5f-ec9a-495c-becf-55755912a630"
+    },
+    {
+      "at": "2026-10-11T18:13:51.738Z",
+      "actor": "local_seedy",
+      "title": "Revised LC assessment staged",
+      "detail": "Active sources and decisions retained. Completeness asserted by reviewer; pending assessment requires selection or dismissal."
+    },
+    {
+      "at": "2026-10-11T18:13:56.712Z",
+      "actor": "Telemetry",
+      "title": "Trace accepted",
+      "detail": "Neatlogs trace ID 3d37af70addb6adb959e7f5d98c209b8; 7 spans acknowledged. Persisted readback remains unverified.",
+      "run": "2e1b74fd-e6a1-4319-aa13-429d848103e3"
+    },
+    {
+      "at": "2026-10-11T18:13:56.834Z",
+      "actor": "local_seedy",
+      "title": "Proposed LC selected for covered checks",
+      "detail": "Previous analysis and decisions archived. Fresh timing and request approval required for corrections. Follow-up: confirm_current_timing, fresh_request_approval. No amendment acceptance, authenticity or bank approval established."
+    },
+    {
+      "at": "2026-10-11T18:13:57.141Z",
+      "actor": "Telemetry",
+      "title": "Trace accepted",
+      "detail": "Neatlogs trace ID a083f718521c90629af0945fb2a20150; 5 spans acknowledged. Persisted readback remains unverified.",
+      "run": "d7d71a34-61b6-4df0-a307-6ba52b8344d4"
+    },
+    {
+      "at": "2026-10-11T18:13:57.214Z",
+      "actor": "Orchestrator",
+      "title": "Live run started",
+      "detail": "Live model execution. The application trace ID will be recorded only if neatlogs accepts the complete run.",
+      "run": "83bba615-9d20-423d-b131-6b0f73fbfa49"
+    },
+    {
+      "at": "2026-10-11T18:14:04.061Z",
+      "actor": "Remedy planner",
+      "title": "Recovery planning rejected",
+      "detail": "Recovery plan conflicts with unresolved timing. Supported correspondence retained; no replacement plan or approval authorized."
+    },
+    {
+      "at": "2026-10-11T18:14:04.061Z",
+      "actor": "Orchestrator",
+      "title": "Live action failed",
+      "detail": "Recovery plan conflicts with unresolved timing.",
+      "run": "83bba615-9d20-423d-b131-6b0f73fbfa49"
+    },
+    {
+      "at": "2026-10-11T18:14:04.898Z",
+      "actor": "Telemetry",
+      "title": "Trace accepted",
+      "detail": "Neatlogs trace ID 76180427a4e3e7ae4018b49e2b470234; 7 spans acknowledged for 6 submitted nodes; 2460 UTF-8 bytes. Persisted payload and dashboard finalization still require readback.",
+      "run": "83bba615-9d20-423d-b131-6b0f73fbfa49"
+    }
+  ],
+  "evidence": {
+    "neatlogs": "",
+    "entire": "",
+    "checkpoint": "",
+    "business": ""
+  },
+  "modelRuns": 10,
+  "usage": {
+    "input": 2429,
+    "output": 1831,
+    "missing": 0
+  },
+  "createdAt": "2026-10-11T17:42:25.697Z",
+  "deadline": "2026-10-21",
+  "plan": {
+    "summary": "Request an exporter-issued invoice correction and a carrier-issued B/L reissue. Keep originals and verify each received version.",
+    "invoiceDraft": "Draft to exporter: please review PHASE4-VERIFY-20261011-174225-INV-v1.txt. currency: source says EUR; LC requires USD. Provide a new issued version.",
+    "carrierDraft": "Draft to carrier: please review PHASE4-VERIFY-20261011-174225-BL-v1.txt. consignee: source says SYNTHETIC BUYER LTD; explicit LC instruction is TO ORDER OF SYNTHETIC TEST BANK. Confirm earliest reissue availability. No message has been sent.",
+    "earliestDate": "2026-10-12",
+    "assumption": "Next-day turnaround assumption, not a carrier commitment. Bank closures and presentation location are not evaluated.",
+    "documentVersions": "lc:2:SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-21\npresentation_days: 21\ninvoice:1:SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\nreference: PHASE4-VERIFY-20261011-174225-INV\nlc_reference: PHASE4-VERIFY-20261011-174225\ncurrency: EUR\namount: 48000\nbl:1:SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\nreference: PHASE4-VERIFY-20261011-174225-BL\nlc_reference: PHASE4-VERIFY-20261011-174225\nconsignee: SYNTHETIC BUYER LTD\nshipment_date: 2026-10-11"
+  },
+  "modelAttempts": 10,
+  "extractionHistory": [
+    {
+      "documentBinding": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1}",
+      "kind": "lc",
+      "version": 1,
+      "originalFields": {
+        "reference": {
+          "value": "PHASE4-VERIFY-20261011-174225",
+          "quote": "reference: PHASE4-VERIFY-20261011-174225"
+        },
+        "currency": {
+          "value": "USD",
+          "quote": "currency: USD"
+        },
+        "max_amount": {
+          "value": "50000",
+          "quote": "max_amount: 50000"
+        },
+        "consignee": {
+          "value": "TO ORDER OF SYNTHETIC TEST BANK",
+          "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+        },
+        "latest_shipment": {
+          "value": "2026-10-12",
+          "quote": "latest_shipment: 2026-10-12"
+        },
+        "expiry": {
+          "value": "2026-10-15",
+          "quote": "expiry: 2026-10-15"
+        },
+        "presentation_days": {
+          "value": "21",
+          "quote": "presentation_days: 21"
+        }
+      },
+      "fields": {
+        "reference": {
+          "value": "PHASE4-VERIFY-20261011-174225",
+          "quote": "reference: PHASE4-VERIFY-20261011-174225"
+        },
+        "currency": {
+          "value": "USD",
+          "quote": "currency: USD"
+        },
+        "max_amount": {
+          "value": "50000",
+          "quote": "max_amount: 50000"
+        },
+        "consignee": {
+          "value": "TO ORDER OF SYNTHETIC TEST BANK",
+          "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+        },
+        "latest_shipment": {
+          "value": "2026-10-12",
+          "quote": "latest_shipment: 2026-10-12"
+        },
+        "expiry": {
+          "value": "2026-10-15",
+          "quote": "expiry: 2026-10-15"
+        },
+        "presentation_days": {
+          "value": "21",
+          "quote": "presentation_days: 21"
+        }
+      },
+      "evidence": {
+        "reference": {
+          "providerQuote": "reference: PHASE4-VERIFY-20261011-174225",
+          "sourceLine": "reference: PHASE4-VERIFY-20261011-174225",
+          "lineNumber": 2,
+          "version": 1
+        },
+        "currency": {
+          "providerQuote": "currency: USD",
+          "sourceLine": "currency: USD",
+          "lineNumber": 3,
+          "version": 1
+        },
+        "max_amount": {
+          "providerQuote": "max_amount: 50000",
+          "sourceLine": "max_amount: 50000",
+          "lineNumber": 4,
+          "version": 1
+        },
+        "consignee": {
+          "providerQuote": "consignee: TO ORDER OF SYNTHETIC TEST BANK",
+          "sourceLine": "consignee: TO ORDER OF SYNTHETIC TEST BANK",
+          "lineNumber": 5,
+          "version": 1
+        },
+        "latest_shipment": {
+          "providerQuote": "latest_shipment: 2026-10-12",
+          "sourceLine": "latest_shipment: 2026-10-12",
+          "lineNumber": 6,
+          "version": 1
+        },
+        "expiry": {
+          "providerQuote": "expiry: 2026-10-15",
+          "sourceLine": "expiry: 2026-10-15",
+          "lineNumber": 7,
+          "version": 1
+        },
+        "presentation_days": {
+          "providerQuote": "presentation_days: 21",
+          "sourceLine": "presentation_days: 21",
+          "lineNumber": 8,
+          "version": 1
+        }
+      },
+      "origin": "cached_fields_revalidated",
+      "at": "2026-10-11T18:13:56.834Z"
+    },
+    {
+      "documentBinding": "{\"kind\":\"invoice\",\"name\":\"PHASE4-VERIFY-20261011-174225-INV-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\\nreference: PHASE4-VERIFY-20261011-174225-INV\\nlc_reference: PHASE4-VERIFY-20261011-174225\\ncurrency: EUR\\namount: 48000\",\"version\":1}",
+      "kind": "invoice",
+      "version": 1,
+      "originalFields": {
+        "reference": {
+          "value": "PHASE4-VERIFY-20261011-174225-INV",
+          "quote": "PHASE4-VERIFY-20261011-174225-INV"
+        },
+        "lc_reference": {
+          "value": "PHASE4-VERIFY-20261011-174225",
+          "quote": "PHASE4-VERIFY-20261011-174225"
+        },
+        "currency": {
+          "value": "EUR",
+          "quote": "EUR"
+        },
+        "amount": {
+          "value": "48000",
+          "quote": "48000"
+        }
+      },
+      "fields": {
+        "reference": {
+          "value": "PHASE4-VERIFY-20261011-174225-INV",
+          "quote": "reference: PHASE4-VERIFY-20261011-174225-INV"
+        },
+        "lc_reference": {
+          "value": "PHASE4-VERIFY-20261011-174225",
+          "quote": "lc_reference: PHASE4-VERIFY-20261011-174225"
+        },
+        "currency": {
+          "value": "EUR",
+          "quote": "currency: EUR"
+        },
+        "amount": {
+          "value": "48000",
+          "quote": "amount: 48000"
+        }
+      },
+      "evidence": {
+        "reference": {
+          "providerQuote": "PHASE4-VERIFY-20261011-174225-INV",
+          "sourceLine": "reference: PHASE4-VERIFY-20261011-174225-INV",
+          "lineNumber": 2,
+          "version": 1
+        },
+        "lc_reference": {
+          "providerQuote": "PHASE4-VERIFY-20261011-174225",
+          "sourceLine": "lc_reference: PHASE4-VERIFY-20261011-174225",
+          "lineNumber": 3,
+          "version": 1
+        },
+        "currency": {
+          "providerQuote": "EUR",
+          "sourceLine": "currency: EUR",
+          "lineNumber": 4,
+          "version": 1
+        },
+        "amount": {
+          "providerQuote": "48000",
+          "sourceLine": "amount: 48000",
+          "lineNumber": 5,
+          "version": 1
+        }
+      },
+      "origin": "cached_fields_revalidated",
+      "at": "2026-10-11T18:13:56.834Z"
+    },
+    {
+      "documentBinding": "{\"kind\":\"bl\",\"name\":\"PHASE4-VERIFY-20261011-174225-BL-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\\nreference: PHASE4-VERIFY-20261011-174225-BL\\nlc_reference: PHASE4-VERIFY-20261011-174225\\nconsignee: SYNTHETIC BUYER LTD\\nshipment_date: 2026-10-11\",\"version\":1}",
+      "kind": "bl",
+      "version": 1,
+      "originalFields": {
+        "reference": {
+          "value": "PHASE4-VERIFY-20261011-174225-BL",
+          "quote": "PHASE4-VERIFY-20261011-174225-BL"
+        },
+        "lc_reference": {
+          "value": "PHASE4-VERIFY-20261011-174225",
+          "quote": "PHASE4-VERIFY-20261011-174225"
+        },
+        "consignee": {
+          "value": "SYNTHETIC BUYER LTD",
+          "quote": "SYNTHETIC BUYER LTD"
+        },
+        "shipment_date": {
+          "value": "2026-10-11",
+          "quote": "2026-10-11"
+        }
+      },
+      "fields": {
+        "reference": {
+          "value": "PHASE4-VERIFY-20261011-174225-BL",
+          "quote": "reference: PHASE4-VERIFY-20261011-174225-BL"
+        },
+        "lc_reference": {
+          "value": "PHASE4-VERIFY-20261011-174225",
+          "quote": "lc_reference: PHASE4-VERIFY-20261011-174225"
+        },
+        "consignee": {
+          "value": "SYNTHETIC BUYER LTD",
+          "quote": "consignee: SYNTHETIC BUYER LTD"
+        },
+        "shipment_date": {
+          "value": "2026-10-11",
+          "quote": "shipment_date: 2026-10-11"
+        }
+      },
+      "evidence": {
+        "reference": {
+          "providerQuote": "PHASE4-VERIFY-20261011-174225-BL",
+          "sourceLine": "reference: PHASE4-VERIFY-20261011-174225-BL",
+          "lineNumber": 2,
+          "version": 1
+        },
+        "lc_reference": {
+          "providerQuote": "PHASE4-VERIFY-20261011-174225",
+          "sourceLine": "lc_reference: PHASE4-VERIFY-20261011-174225",
+          "lineNumber": 3,
+          "version": 1
+        },
+        "consignee": {
+          "providerQuote": "SYNTHETIC BUYER LTD",
+          "sourceLine": "consignee: SYNTHETIC BUYER LTD",
+          "lineNumber": 4,
+          "version": 1
+        },
+        "shipment_date": {
+          "providerQuote": "2026-10-11",
+          "sourceLine": "shipment_date: 2026-10-11",
+          "lineNumber": 5,
+          "version": 1
+        }
+      },
+      "origin": "cached_fields_revalidated",
+      "at": "2026-10-11T18:13:56.834Z"
+    },
+    {
+      "documentBinding": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v2.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-21\\npresentation_days: 21\",\"version\":2}",
+      "kind": "lc",
+      "version": 2,
+      "originalFields": {
+        "reference": {
+          "value": "PHASE4-VERIFY-20261011-174225",
+          "quote": "reference: PHASE4-VERIFY-20261011-174225"
+        },
+        "currency": {
+          "value": "USD",
+          "quote": "currency: USD"
+        },
+        "max_amount": {
+          "value": "50000",
+          "quote": "max_amount: 50000"
+        },
+        "consignee": {
+          "value": "TO ORDER OF SYNTHETIC TEST BANK",
+          "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+        },
+        "latest_shipment": {
+          "value": "2026-10-12",
+          "quote": "latest_shipment: 2026-10-12"
+        },
+        "expiry": {
+          "value": "2026-10-21",
+          "quote": "expiry: 2026-10-21"
+        },
+        "presentation_days": {
+          "value": "21",
+          "quote": "presentation_days: 21"
+        }
+      },
+      "fields": {
+        "reference": {
+          "value": "PHASE4-VERIFY-20261011-174225",
+          "quote": "reference: PHASE4-VERIFY-20261011-174225"
+        },
+        "currency": {
+          "value": "USD",
+          "quote": "currency: USD"
+        },
+        "max_amount": {
+          "value": "50000",
+          "quote": "max_amount: 50000"
+        },
+        "consignee": {
+          "value": "TO ORDER OF SYNTHETIC TEST BANK",
+          "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+        },
+        "latest_shipment": {
+          "value": "2026-10-12",
+          "quote": "latest_shipment: 2026-10-12"
+        },
+        "expiry": {
+          "value": "2026-10-21",
+          "quote": "expiry: 2026-10-21"
+        },
+        "presentation_days": {
+          "value": "21",
+          "quote": "presentation_days: 21"
+        }
+      },
+      "evidence": {
+        "reference": {
+          "providerQuote": "reference: PHASE4-VERIFY-20261011-174225",
+          "sourceLine": "reference: PHASE4-VERIFY-20261011-174225",
+          "lineNumber": 2,
+          "version": 2
+        },
+        "currency": {
+          "providerQuote": "currency: USD",
+          "sourceLine": "currency: USD",
+          "lineNumber": 3,
+          "version": 2
+        },
+        "max_amount": {
+          "providerQuote": "max_amount: 50000",
+          "sourceLine": "max_amount: 50000",
+          "lineNumber": 4,
+          "version": 2
+        },
+        "consignee": {
+          "providerQuote": "consignee: TO ORDER OF SYNTHETIC TEST BANK",
+          "sourceLine": "consignee: TO ORDER OF SYNTHETIC TEST BANK",
+          "lineNumber": 5,
+          "version": 2
+        },
+        "latest_shipment": {
+          "providerQuote": "latest_shipment: 2026-10-12",
+          "sourceLine": "latest_shipment: 2026-10-12",
+          "lineNumber": 6,
+          "version": 2
+        },
+        "expiry": {
+          "providerQuote": "expiry: 2026-10-21",
+          "sourceLine": "expiry: 2026-10-21",
+          "lineNumber": 7,
+          "version": 2
+        },
+        "presentation_days": {
+          "providerQuote": "presentation_days: 21",
+          "sourceLine": "presentation_days: 21",
+          "lineNumber": 8,
+          "version": 2
+        }
+      },
+      "origin": "lc_assessment",
+      "at": "2026-10-11T18:13:56.834Z"
+    }
+  ],
+  "planHistory": [
+    {
+      "plan": {
+        "summary": "The exporter must issue a corrected invoice reflecting USD currency. The carrier must reissue the Bill of Lading naming 'TO ORDER OF SYNTHETIC TEST BANK' as the consignee. All corrected documents must be submitted by the authoritative deadline of 2026-10-15.",
+        "invoiceDraft": "Dear Exporter, please review the invoice as it currently reflects EUR. Per the letter of credit requirements, the currency must be issued in USD. Kindly reissue the invoice with the correct currency.",
+        "carrierDraft": "Dear Carrier, please review the bill of lading as the consignee is currently listed as SYNTHETIC BUYER LTD. Per the letter of credit instructions, this should be listed as TO ORDER OF SYNTHETIC TEST BANK. Kindly reissue the document with the corrected consignee details.",
+        "earliestDate": "2026-10-12",
+        "assumption": "Next-day turnaround assumption, not a carrier commitment. Bank closures and presentation location are not evaluated."
+      },
+      "at": "2026-10-11T18:13:56.834Z"
+    },
+    {
+      "plan": {
+        "summary": "Request an exporter-issued invoice correction and a carrier-issued B/L reissue. Keep originals and verify each received version.",
+        "invoiceDraft": "Draft to exporter: please review PHASE4-VERIFY-20261011-174225-INV-v1.txt. currency: source says EUR; LC requires USD. Provide a new issued version.",
+        "carrierDraft": "Draft to carrier: please review PHASE4-VERIFY-20261011-174225-BL-v1.txt. consignee: source says SYNTHETIC BUYER LTD; explicit LC instruction is TO ORDER OF SYNTHETIC TEST BANK. Confirm earliest reissue availability. No message has been sent.",
+        "earliestDate": "2026-10-12",
+        "assumption": "Next-day turnaround assumption, not a carrier commitment. Bank closures and presentation location are not evaluated.",
+        "documentVersions": "lc:2:SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-21\npresentation_days: 21\ninvoice:1:SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\nreference: PHASE4-VERIFY-20261011-174225-INV\nlc_reference: PHASE4-VERIFY-20261011-174225\ncurrency: EUR\namount: 48000\nbl:1:SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\nreference: PHASE4-VERIFY-20261011-174225-BL\nlc_reference: PHASE4-VERIFY-20261011-174225\nconsignee: SYNTHETIC BUYER LTD\nshipment_date: 2026-10-11"
+      },
+      "at": "2026-10-11T18:14:04.061Z"
+    }
+  ],
+  "statements": [
+    {
+      "id": "9e0ec179-398b-4b6f-a064-f149f1f02be3:s1",
+      "correspondenceId": "9e0ec179-398b-4b6f-a064-f149f1f02be3",
+      "sender": "exporter",
+      "category": "commitment",
+      "target": "invoice",
+      "quote": "Synthetic exporter: We will send the corrected invoice on 2026-10-16.",
+      "date": "2026-10-16"
+    }
+  ],
+  "lcUpdateRequirements": {
+    "documentVersions": "lc:2:SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-21\npresentation_days: 21\ninvoice:1:SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\nreference: PHASE4-VERIFY-20261011-174225-INV\nlc_reference: PHASE4-VERIFY-20261011-174225\ncurrency: EUR\namount: 48000\nbl:1:SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\nreference: PHASE4-VERIFY-20261011-174225-BL\nlc_reference: PHASE4-VERIFY-20261011-174225\nconsignee: SYNTHETIC BUYER LTD\nshipment_date: 2026-10-11",
+    "timingConfirmationRequired": true,
+    "outsideCoverageUnresolved": false,
+    "specialistReviewRequired": false,
+    "draftingRequired": true
+  },
+  "lcAssessmentHistory": [
+    {
+      "outcome": "selected",
+      "assessment": {
+        "id": "791b5a11-9a93-4ed0-b046-37e608ba4a32",
+        "baseRevision": 2,
+        "stagedRevision": 3,
+        "baseBinding": "lc:1:SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-15\npresentation_days: 21\ninvoice:1:SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\nreference: PHASE4-VERIFY-20261011-174225-INV\nlc_reference: PHASE4-VERIFY-20261011-174225\ncurrency: EUR\namount: 48000\nbl:1:SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\nreference: PHASE4-VERIFY-20261011-174225-BL\nlc_reference: PHASE4-VERIFY-20261011-174225\nconsignee: SYNTHETIC BUYER LTD\nshipment_date: 2026-10-11",
+        "baseStateBinding": "{\"asOf\":\"2026-10-11\",\"deadline\":\"2026-10-15\",\"docs\":[{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1},{\"kind\":\"invoice\",\"name\":\"PHASE4-VERIFY-20261011-174225-INV-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\\nreference: PHASE4-VERIFY-20261011-174225-INV\\nlc_reference: PHASE4-VERIFY-20261011-174225\\ncurrency: EUR\\namount: 48000\",\"version\":1},{\"kind\":\"bl\",\"name\":\"PHASE4-VERIFY-20261011-174225-BL-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\\nreference: PHASE4-VERIFY-20261011-174225-BL\\nlc_reference: PHASE4-VERIFY-20261011-174225\\nconsignee: SYNTHETIC BUYER LTD\\nshipment_date: 2026-10-11\",\"version\":1}],\"fields\":{\"bl\":{\"consignee\":{\"quote\":\"SYNTHETIC BUYER LTD\",\"value\":\"SYNTHETIC BUYER LTD\"},\"lc_reference\":{\"quote\":\"PHASE4-VERIFY-20261011-174225\",\"value\":\"PHASE4-VERIFY-20261011-174225\"},\"reference\":{\"quote\":\"PHASE4-VERIFY-20261011-174225-BL\",\"value\":\"PHASE4-VERIFY-20261011-174225-BL\"},\"shipment_date\":{\"quote\":\"2026-10-11\",\"value\":\"2026-10-11\"}},\"invoice\":{\"amount\":{\"quote\":\"48000\",\"value\":\"48000\"},\"currency\":{\"quote\":\"EUR\",\"value\":\"EUR\"},\"lc_reference\":{\"quote\":\"PHASE4-VERIFY-20261011-174225\",\"value\":\"PHASE4-VERIFY-20261011-174225\"},\"reference\":{\"quote\":\"PHASE4-VERIFY-20261011-174225-INV\",\"value\":\"PHASE4-VERIFY-20261011-174225-INV\"}},\"lc\":{\"consignee\":{\"quote\":\"consignee: TO ORDER OF SYNTHETIC TEST BANK\",\"value\":\"TO ORDER OF SYNTHETIC TEST BANK\"},\"currency\":{\"quote\":\"currency: USD\",\"value\":\"USD\"},\"expiry\":{\"quote\":\"expiry: 2026-10-15\",\"value\":\"2026-10-15\"},\"latest_shipment\":{\"quote\":\"latest_shipment: 2026-10-12\",\"value\":\"2026-10-12\"},\"max_amount\":{\"quote\":\"max_amount: 50000\",\"value\":\"50000\"},\"presentation_days\":{\"quote\":\"presentation_days: 21\",\"value\":\"21\"},\"reference\":{\"quote\":\"reference: PHASE4-VERIFY-20261011-174225\",\"value\":\"PHASE4-VERIFY-20261011-174225\"}}},\"findings\":[{\"actual\":\"EUR\",\"doc\":\"invoice\",\"expected\":\"USD\",\"field\":\"currency\",\"id\":\"invoice.currency\",\"owner\":\"Exporter\",\"quote\":\"EUR\",\"severity\":\"blocker\",\"title\":\"Invoice currency conflicts\"},{\"actual\":\"SYNTHETIC BUYER LTD\",\"doc\":\"bl\",\"expected\":\"TO ORDER OF SYNTHETIC TEST BANK\",\"field\":\"consignee\",\"id\":\"bl.consignee\",\"owner\":\"Carrier\",\"quote\":\"SYNTHETIC BUYER LTD\",\"severity\":\"blocker\",\"title\":\"Consignee conflicts with explicit LC instruction\"}],\"history\":[{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1},{\"kind\":\"invoice\",\"name\":\"PHASE4-VERIFY-20261011-174225-INV-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\\nreference: PHASE4-VERIFY-20261011-174225-INV\\nlc_reference: PHASE4-VERIFY-20261011-174225\\ncurrency: EUR\\namount: 48000\",\"version\":1},{\"kind\":\"bl\",\"name\":\"PHASE4-VERIFY-20261011-174225-BL-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\\nreference: PHASE4-VERIFY-20261011-174225-BL\\nlc_reference: PHASE4-VERIFY-20261011-174225\\nconsignee: SYNTHETIC BUYER LTD\\nshipment_date: 2026-10-11\",\"version\":1}],\"plan\":{\"assumption\":\"Next-day turnaround assumption, not a carrier commitment. Bank closures and presentation location are not evaluated.\",\"carrierDraft\":\"Dear Carrier, please review the bill of lading as the consignee is currently listed as SYNTHETIC BUYER LTD. Per the letter of credit instructions, this should be listed as TO ORDER OF SYNTHETIC TEST BANK. Kindly reissue the document with the corrected consignee details.\",\"earliestDate\":\"2026-10-12\",\"invoiceDraft\":\"Dear Exporter, please review the invoice as it currently reflects EUR. Per the letter of credit requirements, the currency must be issued in USD. Kindly reissue the invoice with the correct currency.\",\"summary\":\"The exporter must issue a corrected invoice reflecting USD currency. The carrier must reissue the Bill of Lading naming 'TO ORDER OF SYNTHETIC TEST BANK' as the consignee. All corrected documents must be submitted by the authoritative deadline of 2026-10-15.\"},\"status\":\"approval\"}",
+        "candidateBinding": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v2.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-21\\npresentation_days: 21\",\"version\":2}",
+        "candidate": {
+          "kind": "lc",
+          "name": "PHASE4-VERIFY-20261011-174225-LC-v2.txt",
+          "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-21\npresentation_days: 21",
+          "version": 2,
+          "synthetic": false
+        },
+        "sources": {
+          "previous": {
+            "kind": "lc",
+            "name": "PHASE4-VERIFY-20261011-174225-LC-v1.txt",
+            "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-15\npresentation_days: 21",
+            "version": 1,
+            "synthetic": false
+          },
+          "proposed": {
+            "kind": "lc",
+            "name": "PHASE4-VERIFY-20261011-174225-LC-v2.txt",
+            "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-21\npresentation_days: 21",
+            "version": 2,
+            "synthetic": false
+          }
+        },
+        "assertion": {
+          "completeText": true,
+          "note": "Authorized synthetic verification supplies the complete revised LC for covered checks. Only expiry changes.",
+          "reviewer": "local_seedy",
+          "at": "2026-10-11T18:13:51.738Z"
+        },
+        "asOf": "2026-10-11",
+        "fields": {
+          "lc": {
+            "reference": {
+              "value": "PHASE4-VERIFY-20261011-174225",
+              "quote": "reference: PHASE4-VERIFY-20261011-174225"
+            },
+            "currency": {
+              "value": "USD",
+              "quote": "currency: USD"
+            },
+            "max_amount": {
+              "value": "50000",
+              "quote": "max_amount: 50000"
+            },
+            "consignee": {
+              "value": "TO ORDER OF SYNTHETIC TEST BANK",
+              "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+            },
+            "latest_shipment": {
+              "value": "2026-10-12",
+              "quote": "latest_shipment: 2026-10-12"
+            },
+            "expiry": {
+              "value": "2026-10-21",
+              "quote": "expiry: 2026-10-21"
+            },
+            "presentation_days": {
+              "value": "21",
+              "quote": "presentation_days: 21"
+            }
+          },
+          "invoice": {
+            "reference": {
+              "value": "PHASE4-VERIFY-20261011-174225-INV",
+              "quote": "reference: PHASE4-VERIFY-20261011-174225-INV"
+            },
+            "lc_reference": {
+              "value": "PHASE4-VERIFY-20261011-174225",
+              "quote": "lc_reference: PHASE4-VERIFY-20261011-174225"
+            },
+            "currency": {
+              "value": "EUR",
+              "quote": "currency: EUR"
+            },
+            "amount": {
+              "value": "48000",
+              "quote": "amount: 48000"
+            }
+          },
+          "bl": {
+            "reference": {
+              "value": "PHASE4-VERIFY-20261011-174225-BL",
+              "quote": "reference: PHASE4-VERIFY-20261011-174225-BL"
+            },
+            "lc_reference": {
+              "value": "PHASE4-VERIFY-20261011-174225",
+              "quote": "lc_reference: PHASE4-VERIFY-20261011-174225"
+            },
+            "consignee": {
+              "value": "SYNTHETIC BUYER LTD",
+              "quote": "consignee: SYNTHETIC BUYER LTD"
+            },
+            "shipment_date": {
+              "value": "2026-10-11",
+              "quote": "shipment_date: 2026-10-11"
+            }
+          }
+        },
+        "sourceGrounding": {
+          "previous": {
+            "lc": {
+              "documentBinding": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1}",
+              "kind": "lc",
+              "version": 1,
+              "originalFields": {
+                "reference": {
+                  "value": "PHASE4-VERIFY-20261011-174225",
+                  "quote": "reference: PHASE4-VERIFY-20261011-174225"
+                },
+                "currency": {
+                  "value": "USD",
+                  "quote": "currency: USD"
+                },
+                "max_amount": {
+                  "value": "50000",
+                  "quote": "max_amount: 50000"
+                },
+                "consignee": {
+                  "value": "TO ORDER OF SYNTHETIC TEST BANK",
+                  "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+                },
+                "latest_shipment": {
+                  "value": "2026-10-12",
+                  "quote": "latest_shipment: 2026-10-12"
+                },
+                "expiry": {
+                  "value": "2026-10-15",
+                  "quote": "expiry: 2026-10-15"
+                },
+                "presentation_days": {
+                  "value": "21",
+                  "quote": "presentation_days: 21"
+                }
+              },
+              "fields": {
+                "reference": {
+                  "value": "PHASE4-VERIFY-20261011-174225",
+                  "quote": "reference: PHASE4-VERIFY-20261011-174225"
+                },
+                "currency": {
+                  "value": "USD",
+                  "quote": "currency: USD"
+                },
+                "max_amount": {
+                  "value": "50000",
+                  "quote": "max_amount: 50000"
+                },
+                "consignee": {
+                  "value": "TO ORDER OF SYNTHETIC TEST BANK",
+                  "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+                },
+                "latest_shipment": {
+                  "value": "2026-10-12",
+                  "quote": "latest_shipment: 2026-10-12"
+                },
+                "expiry": {
+                  "value": "2026-10-15",
+                  "quote": "expiry: 2026-10-15"
+                },
+                "presentation_days": {
+                  "value": "21",
+                  "quote": "presentation_days: 21"
+                }
+              },
+              "evidence": {
+                "reference": {
+                  "providerQuote": "reference: PHASE4-VERIFY-20261011-174225",
+                  "sourceLine": "reference: PHASE4-VERIFY-20261011-174225",
+                  "lineNumber": 2,
+                  "version": 1
+                },
+                "currency": {
+                  "providerQuote": "currency: USD",
+                  "sourceLine": "currency: USD",
+                  "lineNumber": 3,
+                  "version": 1
+                },
+                "max_amount": {
+                  "providerQuote": "max_amount: 50000",
+                  "sourceLine": "max_amount: 50000",
+                  "lineNumber": 4,
+                  "version": 1
+                },
+                "consignee": {
+                  "providerQuote": "consignee: TO ORDER OF SYNTHETIC TEST BANK",
+                  "sourceLine": "consignee: TO ORDER OF SYNTHETIC TEST BANK",
+                  "lineNumber": 5,
+                  "version": 1
+                },
+                "latest_shipment": {
+                  "providerQuote": "latest_shipment: 2026-10-12",
+                  "sourceLine": "latest_shipment: 2026-10-12",
+                  "lineNumber": 6,
+                  "version": 1
+                },
+                "expiry": {
+                  "providerQuote": "expiry: 2026-10-15",
+                  "sourceLine": "expiry: 2026-10-15",
+                  "lineNumber": 7,
+                  "version": 1
+                },
+                "presentation_days": {
+                  "providerQuote": "presentation_days: 21",
+                  "sourceLine": "presentation_days: 21",
+                  "lineNumber": 8,
+                  "version": 1
+                }
+              }
+            },
+            "invoice": {
+              "documentBinding": "{\"kind\":\"invoice\",\"name\":\"PHASE4-VERIFY-20261011-174225-INV-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\\nreference: PHASE4-VERIFY-20261011-174225-INV\\nlc_reference: PHASE4-VERIFY-20261011-174225\\ncurrency: EUR\\namount: 48000\",\"version\":1}",
+              "kind": "invoice",
+              "version": 1,
+              "originalFields": {
+                "reference": {
+                  "value": "PHASE4-VERIFY-20261011-174225-INV",
+                  "quote": "PHASE4-VERIFY-20261011-174225-INV"
+                },
+                "lc_reference": {
+                  "value": "PHASE4-VERIFY-20261011-174225",
+                  "quote": "PHASE4-VERIFY-20261011-174225"
+                },
+                "currency": {
+                  "value": "EUR",
+                  "quote": "EUR"
+                },
+                "amount": {
+                  "value": "48000",
+                  "quote": "48000"
+                }
+              },
+              "fields": {
+                "reference": {
+                  "value": "PHASE4-VERIFY-20261011-174225-INV",
+                  "quote": "reference: PHASE4-VERIFY-20261011-174225-INV"
+                },
+                "lc_reference": {
+                  "value": "PHASE4-VERIFY-20261011-174225",
+                  "quote": "lc_reference: PHASE4-VERIFY-20261011-174225"
+                },
+                "currency": {
+                  "value": "EUR",
+                  "quote": "currency: EUR"
+                },
+                "amount": {
+                  "value": "48000",
+                  "quote": "amount: 48000"
+                }
+              },
+              "evidence": {
+                "reference": {
+                  "providerQuote": "PHASE4-VERIFY-20261011-174225-INV",
+                  "sourceLine": "reference: PHASE4-VERIFY-20261011-174225-INV",
+                  "lineNumber": 2,
+                  "version": 1
+                },
+                "lc_reference": {
+                  "providerQuote": "PHASE4-VERIFY-20261011-174225",
+                  "sourceLine": "lc_reference: PHASE4-VERIFY-20261011-174225",
+                  "lineNumber": 3,
+                  "version": 1
+                },
+                "currency": {
+                  "providerQuote": "EUR",
+                  "sourceLine": "currency: EUR",
+                  "lineNumber": 4,
+                  "version": 1
+                },
+                "amount": {
+                  "providerQuote": "48000",
+                  "sourceLine": "amount: 48000",
+                  "lineNumber": 5,
+                  "version": 1
+                }
+              }
+            },
+            "bl": {
+              "documentBinding": "{\"kind\":\"bl\",\"name\":\"PHASE4-VERIFY-20261011-174225-BL-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\\nreference: PHASE4-VERIFY-20261011-174225-BL\\nlc_reference: PHASE4-VERIFY-20261011-174225\\nconsignee: SYNTHETIC BUYER LTD\\nshipment_date: 2026-10-11\",\"version\":1}",
+              "kind": "bl",
+              "version": 1,
+              "originalFields": {
+                "reference": {
+                  "value": "PHASE4-VERIFY-20261011-174225-BL",
+                  "quote": "PHASE4-VERIFY-20261011-174225-BL"
+                },
+                "lc_reference": {
+                  "value": "PHASE4-VERIFY-20261011-174225",
+                  "quote": "PHASE4-VERIFY-20261011-174225"
+                },
+                "consignee": {
+                  "value": "SYNTHETIC BUYER LTD",
+                  "quote": "SYNTHETIC BUYER LTD"
+                },
+                "shipment_date": {
+                  "value": "2026-10-11",
+                  "quote": "2026-10-11"
+                }
+              },
+              "fields": {
+                "reference": {
+                  "value": "PHASE4-VERIFY-20261011-174225-BL",
+                  "quote": "reference: PHASE4-VERIFY-20261011-174225-BL"
+                },
+                "lc_reference": {
+                  "value": "PHASE4-VERIFY-20261011-174225",
+                  "quote": "lc_reference: PHASE4-VERIFY-20261011-174225"
+                },
+                "consignee": {
+                  "value": "SYNTHETIC BUYER LTD",
+                  "quote": "consignee: SYNTHETIC BUYER LTD"
+                },
+                "shipment_date": {
+                  "value": "2026-10-11",
+                  "quote": "shipment_date: 2026-10-11"
+                }
+              },
+              "evidence": {
+                "reference": {
+                  "providerQuote": "PHASE4-VERIFY-20261011-174225-BL",
+                  "sourceLine": "reference: PHASE4-VERIFY-20261011-174225-BL",
+                  "lineNumber": 2,
+                  "version": 1
+                },
+                "lc_reference": {
+                  "providerQuote": "PHASE4-VERIFY-20261011-174225",
+                  "sourceLine": "lc_reference: PHASE4-VERIFY-20261011-174225",
+                  "lineNumber": 3,
+                  "version": 1
+                },
+                "consignee": {
+                  "providerQuote": "SYNTHETIC BUYER LTD",
+                  "sourceLine": "consignee: SYNTHETIC BUYER LTD",
+                  "lineNumber": 4,
+                  "version": 1
+                },
+                "shipment_date": {
+                  "providerQuote": "2026-10-11",
+                  "sourceLine": "shipment_date: 2026-10-11",
+                  "lineNumber": 5,
+                  "version": 1
+                }
+              }
+            }
+          },
+          "candidate": {
+            "documentBinding": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v2.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-21\\npresentation_days: 21\",\"version\":2}",
+            "kind": "lc",
+            "version": 2,
+            "originalFields": {
+              "reference": {
+                "value": "PHASE4-VERIFY-20261011-174225",
+                "quote": "reference: PHASE4-VERIFY-20261011-174225"
+              },
+              "currency": {
+                "value": "USD",
+                "quote": "currency: USD"
+              },
+              "max_amount": {
+                "value": "50000",
+                "quote": "max_amount: 50000"
+              },
+              "consignee": {
+                "value": "TO ORDER OF SYNTHETIC TEST BANK",
+                "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+              },
+              "latest_shipment": {
+                "value": "2026-10-12",
+                "quote": "latest_shipment: 2026-10-12"
+              },
+              "expiry": {
+                "value": "2026-10-21",
+                "quote": "expiry: 2026-10-21"
+              },
+              "presentation_days": {
+                "value": "21",
+                "quote": "presentation_days: 21"
+              }
+            },
+            "fields": {
+              "reference": {
+                "value": "PHASE4-VERIFY-20261011-174225",
+                "quote": "reference: PHASE4-VERIFY-20261011-174225"
+              },
+              "currency": {
+                "value": "USD",
+                "quote": "currency: USD"
+              },
+              "max_amount": {
+                "value": "50000",
+                "quote": "max_amount: 50000"
+              },
+              "consignee": {
+                "value": "TO ORDER OF SYNTHETIC TEST BANK",
+                "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+              },
+              "latest_shipment": {
+                "value": "2026-10-12",
+                "quote": "latest_shipment: 2026-10-12"
+              },
+              "expiry": {
+                "value": "2026-10-21",
+                "quote": "expiry: 2026-10-21"
+              },
+              "presentation_days": {
+                "value": "21",
+                "quote": "presentation_days: 21"
+              }
+            },
+            "evidence": {
+              "reference": {
+                "providerQuote": "reference: PHASE4-VERIFY-20261011-174225",
+                "sourceLine": "reference: PHASE4-VERIFY-20261011-174225",
+                "lineNumber": 2,
+                "version": 2
+              },
+              "currency": {
+                "providerQuote": "currency: USD",
+                "sourceLine": "currency: USD",
+                "lineNumber": 3,
+                "version": 2
+              },
+              "max_amount": {
+                "providerQuote": "max_amount: 50000",
+                "sourceLine": "max_amount: 50000",
+                "lineNumber": 4,
+                "version": 2
+              },
+              "consignee": {
+                "providerQuote": "consignee: TO ORDER OF SYNTHETIC TEST BANK",
+                "sourceLine": "consignee: TO ORDER OF SYNTHETIC TEST BANK",
+                "lineNumber": 5,
+                "version": 2
+              },
+              "latest_shipment": {
+                "providerQuote": "latest_shipment: 2026-10-12",
+                "sourceLine": "latest_shipment: 2026-10-12",
+                "lineNumber": 6,
+                "version": 2
+              },
+              "expiry": {
+                "providerQuote": "expiry: 2026-10-21",
+                "sourceLine": "expiry: 2026-10-21",
+                "lineNumber": 7,
+                "version": 2
+              },
+              "presentation_days": {
+                "providerQuote": "presentation_days: 21",
+                "sourceLine": "presentation_days: 21",
+                "lineNumber": 8,
+                "version": 2
+              }
+            }
+          }
+        },
+        "coveredTerms": [
+          {
+            "field": "reference",
+            "before": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1}",
+              "version": 1,
+              "value": "PHASE4-VERIFY-20261011-174225",
+              "quote": "reference: PHASE4-VERIFY-20261011-174225"
+            },
+            "after": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v2.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-21\\npresentation_days: 21\",\"version\":2}",
+              "version": 2,
+              "value": "PHASE4-VERIFY-20261011-174225",
+              "quote": "reference: PHASE4-VERIFY-20261011-174225"
+            },
+            "changed": false
+          },
+          {
+            "field": "currency",
+            "before": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1}",
+              "version": 1,
+              "value": "USD",
+              "quote": "currency: USD"
+            },
+            "after": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v2.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-21\\npresentation_days: 21\",\"version\":2}",
+              "version": 2,
+              "value": "USD",
+              "quote": "currency: USD"
+            },
+            "changed": false
+          },
+          {
+            "field": "max_amount",
+            "before": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1}",
+              "version": 1,
+              "value": "50000",
+              "quote": "max_amount: 50000"
+            },
+            "after": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v2.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-21\\npresentation_days: 21\",\"version\":2}",
+              "version": 2,
+              "value": "50000",
+              "quote": "max_amount: 50000"
+            },
+            "changed": false
+          },
+          {
+            "field": "consignee",
+            "before": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1}",
+              "version": 1,
+              "value": "TO ORDER OF SYNTHETIC TEST BANK",
+              "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+            },
+            "after": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v2.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-21\\npresentation_days: 21\",\"version\":2}",
+              "version": 2,
+              "value": "TO ORDER OF SYNTHETIC TEST BANK",
+              "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+            },
+            "changed": false
+          },
+          {
+            "field": "latest_shipment",
+            "before": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1}",
+              "version": 1,
+              "value": "2026-10-12",
+              "quote": "latest_shipment: 2026-10-12"
+            },
+            "after": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v2.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-21\\npresentation_days: 21\",\"version\":2}",
+              "version": 2,
+              "value": "2026-10-12",
+              "quote": "latest_shipment: 2026-10-12"
+            },
+            "changed": false
+          },
+          {
+            "field": "expiry",
+            "before": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1}",
+              "version": 1,
+              "value": "2026-10-15",
+              "quote": "expiry: 2026-10-15"
+            },
+            "after": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v2.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-21\\npresentation_days: 21\",\"version\":2}",
+              "version": 2,
+              "value": "2026-10-21",
+              "quote": "expiry: 2026-10-21"
+            },
+            "changed": true
+          },
+          {
+            "field": "presentation_days",
+            "before": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1}",
+              "version": 1,
+              "value": "21",
+              "quote": "presentation_days: 21"
+            },
+            "after": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v2.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-21\\npresentation_days: 21\",\"version\":2}",
+              "version": 2,
+              "value": "21",
+              "quote": "presentation_days: 21"
+            },
+            "changed": false
+          }
+        ],
+        "deadlines": {
+          "before": {
+            "date": "2026-10-15",
+            "shipment": {
+              "source": "{\"kind\":\"bl\",\"name\":\"PHASE4-VERIFY-20261011-174225-BL-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\\nreference: PHASE4-VERIFY-20261011-174225-BL\\nlc_reference: PHASE4-VERIFY-20261011-174225\\nconsignee: SYNTHETIC BUYER LTD\\nshipment_date: 2026-10-11\",\"version\":1}",
+              "version": 1,
+              "value": "2026-10-11",
+              "quote": "shipment_date: 2026-10-11"
+            },
+            "expiry": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1}",
+              "version": 1,
+              "value": "2026-10-15",
+              "quote": "expiry: 2026-10-15"
+            },
+            "presentationDays": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-15\\npresentation_days: 21\",\"version\":1}",
+              "version": 1,
+              "value": "21",
+              "quote": "presentation_days: 21"
+            },
+            "shipmentPlusDays": "2026-11-01"
+          },
+          "after": {
+            "date": "2026-10-21",
+            "shipment": {
+              "source": "{\"kind\":\"bl\",\"name\":\"PHASE4-VERIFY-20261011-174225-BL-v1.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\\nreference: PHASE4-VERIFY-20261011-174225-BL\\nlc_reference: PHASE4-VERIFY-20261011-174225\\nconsignee: SYNTHETIC BUYER LTD\\nshipment_date: 2026-10-11\",\"version\":1}",
+              "version": 1,
+              "value": "2026-10-11",
+              "quote": "shipment_date: 2026-10-11"
+            },
+            "expiry": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v2.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-21\\npresentation_days: 21\",\"version\":2}",
+              "version": 2,
+              "value": "2026-10-21",
+              "quote": "expiry: 2026-10-21"
+            },
+            "presentationDays": {
+              "source": "{\"kind\":\"lc\",\"name\":\"PHASE4-VERIFY-20261011-174225-LC-v2.txt\",\"synthetic\":false,\"text\":\"SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\\nreference: PHASE4-VERIFY-20261011-174225\\ncurrency: USD\\nmax_amount: 50000\\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\\nlatest_shipment: 2026-10-12\\nexpiry: 2026-10-21\\npresentation_days: 21\",\"version\":2}",
+              "version": 2,
+              "value": "21",
+              "quote": "presentation_days: 21"
+            },
+            "shipmentPlusDays": "2026-11-01"
+          }
+        },
+        "findings": {
+          "resolved": [],
+          "persistent": [
+            {
+              "before": {
+                "id": "invoice.currency",
+                "doc": "invoice",
+                "field": "currency",
+                "title": "Invoice currency conflicts",
+                "expected": "USD",
+                "actual": "EUR",
+                "quote": "currency: EUR",
+                "owner": "Exporter",
+                "severity": "blocker"
+              },
+              "after": {
+                "id": "invoice.currency",
+                "doc": "invoice",
+                "field": "currency",
+                "title": "Invoice currency conflicts",
+                "expected": "USD",
+                "actual": "EUR",
+                "quote": "currency: EUR",
+                "owner": "Exporter",
+                "severity": "blocker"
+              }
+            },
+            {
+              "before": {
+                "id": "bl.consignee",
+                "doc": "bl",
+                "field": "consignee",
+                "title": "Consignee conflicts with explicit LC instruction",
+                "expected": "TO ORDER OF SYNTHETIC TEST BANK",
+                "actual": "SYNTHETIC BUYER LTD",
+                "quote": "consignee: SYNTHETIC BUYER LTD",
+                "owner": "Carrier",
+                "severity": "blocker"
+              },
+              "after": {
+                "id": "bl.consignee",
+                "doc": "bl",
+                "field": "consignee",
+                "title": "Consignee conflicts with explicit LC instruction",
+                "expected": "TO ORDER OF SYNTHETIC TEST BANK",
+                "actual": "SYNTHETIC BUYER LTD",
+                "quote": "consignee: SYNTHETIC BUYER LTD",
+                "owner": "Carrier",
+                "severity": "blocker"
+              }
+            }
+          ],
+          "new": [],
+          "materiallyChanged": []
+        },
+        "outsideCoverage": {
+          "unresolved": false,
+          "previousRemainder": "SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: <covered:reference>\ncurrency: <covered:currency>\nmax_amount: <covered:max_amount>\nconsignee: <covered:consignee>\nlatest_shipment: <covered:latest_shipment>\nexpiry: <covered:expiry>\npresentation_days: <covered:presentation_days>",
+          "proposedRemainder": "SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: <covered:reference>\ncurrency: <covered:currency>\nmax_amount: <covered:max_amount>\nconsignee: <covered:consignee>\nlatest_shipment: <covered:latest_shipment>\nexpiry: <covered:expiry>\npresentation_days: <covered:presentation_days>",
+          "reason": "No change detected outside extracted values. This is not a complete requirement inventory."
+        },
+        "affected": {
+          "plan": {
+            "summary": "The exporter must issue a corrected invoice reflecting USD currency. The carrier must reissue the Bill of Lading naming 'TO ORDER OF SYNTHETIC TEST BANK' as the consignee. All corrected documents must be submitted by the authoritative deadline of 2026-10-15.",
+            "invoiceDraft": "Dear Exporter, please review the invoice as it currently reflects EUR. Per the letter of credit requirements, the currency must be issued in USD. Kindly reissue the invoice with the correct currency.",
+            "carrierDraft": "Dear Carrier, please review the bill of lading as the consignee is currently listed as SYNTHETIC BUYER LTD. Per the letter of credit instructions, this should be listed as TO ORDER OF SYNTHETIC TEST BANK. Kindly reissue the document with the corrected consignee details.",
+            "earliestDate": "2026-10-12",
+            "assumption": "Next-day turnaround assumption, not a carrier commitment. Bank closures and presentation location are not evaluated."
+          },
+          "correspondence": []
+        },
+        "limitations": [
+          "Complete text is a human assertion, not independently verified.",
+          "Selection establishes only the prototype analysis basis; amendment effectiveness, authenticity and bank approval are unverified.",
+          "Only the existing seven LC fields and invoice/B/L checks are covered.",
+          "Bank calendars, cutoffs, originals, signatures and full presentation review remain outside coverage."
+        ]
+      },
+      "at": "2026-10-11T18:13:56.834Z",
+      "resultingRevision": 4,
+      "previous": {
+        "docs": [
+          {
+            "kind": "lc",
+            "name": "PHASE4-VERIFY-20261011-174225-LC-v1.txt",
+            "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-15\npresentation_days: 21",
+            "version": 1,
+            "synthetic": false
+          },
+          {
+            "kind": "invoice",
+            "name": "PHASE4-VERIFY-20261011-174225-INV-v1.txt",
+            "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\nreference: PHASE4-VERIFY-20261011-174225-INV\nlc_reference: PHASE4-VERIFY-20261011-174225\ncurrency: EUR\namount: 48000",
+            "version": 1,
+            "synthetic": false
+          },
+          {
+            "kind": "bl",
+            "name": "PHASE4-VERIFY-20261011-174225-BL-v1.txt",
+            "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\nreference: PHASE4-VERIFY-20261011-174225-BL\nlc_reference: PHASE4-VERIFY-20261011-174225\nconsignee: SYNTHETIC BUYER LTD\nshipment_date: 2026-10-11",
+            "version": 1,
+            "synthetic": false
+          }
+        ],
+        "history": [
+          {
+            "kind": "lc",
+            "name": "PHASE4-VERIFY-20261011-174225-LC-v1.txt",
+            "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-15\npresentation_days: 21",
+            "version": 1,
+            "synthetic": false
+          },
+          {
+            "kind": "invoice",
+            "name": "PHASE4-VERIFY-20261011-174225-INV-v1.txt",
+            "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\nreference: PHASE4-VERIFY-20261011-174225-INV\nlc_reference: PHASE4-VERIFY-20261011-174225\ncurrency: EUR\namount: 48000",
+            "version": 1,
+            "synthetic": false
+          },
+          {
+            "kind": "bl",
+            "name": "PHASE4-VERIFY-20261011-174225-BL-v1.txt",
+            "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\nreference: PHASE4-VERIFY-20261011-174225-BL\nlc_reference: PHASE4-VERIFY-20261011-174225\nconsignee: SYNTHETIC BUYER LTD\nshipment_date: 2026-10-11",
+            "version": 1,
+            "synthetic": false
+          }
+        ],
+        "fields": {
+          "lc": {
+            "reference": {
+              "value": "PHASE4-VERIFY-20261011-174225",
+              "quote": "reference: PHASE4-VERIFY-20261011-174225"
+            },
+            "currency": {
+              "value": "USD",
+              "quote": "currency: USD"
+            },
+            "max_amount": {
+              "value": "50000",
+              "quote": "max_amount: 50000"
+            },
+            "consignee": {
+              "value": "TO ORDER OF SYNTHETIC TEST BANK",
+              "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+            },
+            "latest_shipment": {
+              "value": "2026-10-12",
+              "quote": "latest_shipment: 2026-10-12"
+            },
+            "expiry": {
+              "value": "2026-10-15",
+              "quote": "expiry: 2026-10-15"
+            },
+            "presentation_days": {
+              "value": "21",
+              "quote": "presentation_days: 21"
+            }
+          },
+          "invoice": {
+            "reference": {
+              "value": "PHASE4-VERIFY-20261011-174225-INV",
+              "quote": "PHASE4-VERIFY-20261011-174225-INV"
+            },
+            "lc_reference": {
+              "value": "PHASE4-VERIFY-20261011-174225",
+              "quote": "PHASE4-VERIFY-20261011-174225"
+            },
+            "currency": {
+              "value": "EUR",
+              "quote": "EUR"
+            },
+            "amount": {
+              "value": "48000",
+              "quote": "48000"
+            }
+          },
+          "bl": {
+            "reference": {
+              "value": "PHASE4-VERIFY-20261011-174225-BL",
+              "quote": "PHASE4-VERIFY-20261011-174225-BL"
+            },
+            "lc_reference": {
+              "value": "PHASE4-VERIFY-20261011-174225",
+              "quote": "PHASE4-VERIFY-20261011-174225"
+            },
+            "consignee": {
+              "value": "SYNTHETIC BUYER LTD",
+              "quote": "SYNTHETIC BUYER LTD"
+            },
+            "shipment_date": {
+              "value": "2026-10-11",
+              "quote": "2026-10-11"
+            }
+          }
+        },
+        "findings": [
+          {
+            "id": "invoice.currency",
+            "doc": "invoice",
+            "field": "currency",
+            "title": "Invoice currency conflicts",
+            "expected": "USD",
+            "actual": "EUR",
+            "quote": "EUR",
+            "owner": "Exporter",
+            "severity": "blocker"
+          },
+          {
+            "id": "bl.consignee",
+            "doc": "bl",
+            "field": "consignee",
+            "title": "Consignee conflicts with explicit LC instruction",
+            "expected": "TO ORDER OF SYNTHETIC TEST BANK",
+            "actual": "SYNTHETIC BUYER LTD",
+            "quote": "SYNTHETIC BUYER LTD",
+            "owner": "Carrier",
+            "severity": "blocker"
+          }
+        ],
+        "deadline": "2026-10-15",
+        "status": "approval",
+        "asOf": "2026-10-11",
+        "plan": {
+          "summary": "The exporter must issue a corrected invoice reflecting USD currency. The carrier must reissue the Bill of Lading naming 'TO ORDER OF SYNTHETIC TEST BANK' as the consignee. All corrected documents must be submitted by the authoritative deadline of 2026-10-15.",
+          "invoiceDraft": "Dear Exporter, please review the invoice as it currently reflects EUR. Per the letter of credit requirements, the currency must be issued in USD. Kindly reissue the invoice with the correct currency.",
+          "carrierDraft": "Dear Carrier, please review the bill of lading as the consignee is currently listed as SYNTHETIC BUYER LTD. Per the letter of credit instructions, this should be listed as TO ORDER OF SYNTHETIC TEST BANK. Kindly reissue the document with the corrected consignee details.",
+          "earliestDate": "2026-10-12",
+          "assumption": "Next-day turnaround assumption, not a carrier commitment. Bank closures and presentation location are not evaluated."
+        }
+      },
+      "selection": {
+        "completeText": true,
+        "selectForCoveredChecks": true,
+        "outsideCoverageReviewed": true,
+        "note": "Authorized synthetic reviewer selects this complete version for covered checks only. Unchanged uncovered text reviewed; no legal acceptance or authenticity established.",
+        "reviewer": "local_seedy",
+        "at": "2026-10-11T18:13:56.834Z"
+      }
+    }
+  ],
+  "correspondence": [
+    {
+      "id": "9e0ec179-398b-4b6f-a064-f149f1f02be3",
+      "sender": "exporter",
+      "text": "Synthetic exporter: We will send the corrected invoice on 2026-10-16.",
+      "receivedOn": "2026-10-11",
+      "sourceVersions": "lc:v2|invoice:v1|bl:v1",
+      "label": "User-provided correspondence \u00b7 authenticity unverified"
+    }
+  ],
+  "planningFailures": [
+    {
+      "documentVersions": "lc:2:SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-21\npresentation_days: 21\ninvoice:1:SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\nreference: PHASE4-VERIFY-20261011-174225-INV\nlc_reference: PHASE4-VERIFY-20261011-174225\ncurrency: EUR\namount: 48000\nbl:1:SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\nreference: PHASE4-VERIFY-20261011-174225-BL\nlc_reference: PHASE4-VERIFY-20261011-174225\nconsignee: SYNTHETIC BUYER LTD\nshipment_date: 2026-10-11",
+      "at": "2026-10-11T18:14:04.061Z",
+      "reason": "Recovery plan conflicts with unresolved timing.",
+      "proposal": {
+        "actions": [
+          {
+            "id": "a1",
+            "kind": "request_invoice",
+            "owner": "Exporter",
+            "dueDate": "2026-10-16",
+            "dependsOn": [],
+            "evidenceRefs": [
+              "statement:9e0ec179-398b-4b6f-a064-f149f1f02be3:s1"
+            ]
+          },
+          {
+            "id": "a2",
+            "kind": "clarify_timing",
+            "owner": "Carrier",
+            "dueDate": null,
+            "dependsOn": [
+              "a1"
+            ],
+            "evidenceRefs": [
+              "finding:bl.consignee"
+            ]
+          },
+          {
+            "id": "a3",
+            "kind": "human_escalation",
+            "owner": "Carrier",
+            "dueDate": null,
+            "dependsOn": [
+              "a2"
+            ],
+            "evidenceRefs": [
+              "finding:bl.consignee"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

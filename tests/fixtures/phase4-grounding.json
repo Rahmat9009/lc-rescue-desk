@@ -1,0 +1,119 @@
+{
+  "docs": [
+    {
+      "kind": "lc",
+      "name": "PHASE4-VERIFY-20261011-174225-LC-v1.txt",
+      "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - not a bank instrument\nreference: PHASE4-VERIFY-20261011-174225\ncurrency: USD\nmax_amount: 50000\nconsignee: TO ORDER OF SYNTHETIC TEST BANK\nlatest_shipment: 2026-10-12\nexpiry: 2026-10-15\npresentation_days: 21",
+      "version": 1,
+      "synthetic": false
+    },
+    {
+      "kind": "invoice",
+      "name": "PHASE4-VERIFY-20261011-174225-INV-v1.txt",
+      "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic exporter invoice\nreference: PHASE4-VERIFY-20261011-174225-INV\nlc_reference: PHASE4-VERIFY-20261011-174225\ncurrency: EUR\namount: 48000",
+      "version": 1,
+      "synthetic": false
+    },
+    {
+      "kind": "bl",
+      "name": "PHASE4-VERIFY-20261011-174225-BL-v1.txt",
+      "text": "SYNTHETIC PHASE 4 VERIFICATION ONLY - synthetic carrier document\nreference: PHASE4-VERIFY-20261011-174225-BL\nlc_reference: PHASE4-VERIFY-20261011-174225\nconsignee: SYNTHETIC BUYER LTD\nshipment_date: 2026-10-11",
+      "version": 1,
+      "synthetic": false
+    }
+  ],
+  "fields": {
+    "lc": {
+      "reference": {
+        "value": "PHASE4-VERIFY-20261011-174225",
+        "quote": "reference: PHASE4-VERIFY-20261011-174225"
+      },
+      "currency": {
+        "value": "USD",
+        "quote": "currency: USD"
+      },
+      "max_amount": {
+        "value": "50000",
+        "quote": "max_amount: 50000"
+      },
+      "consignee": {
+        "value": "TO ORDER OF SYNTHETIC TEST BANK",
+        "quote": "consignee: TO ORDER OF SYNTHETIC TEST BANK"
+      },
+      "latest_shipment": {
+        "value": "2026-10-12",
+        "quote": "latest_shipment: 2026-10-12"
+      },
+      "expiry": {
+        "value": "2026-10-15",
+        "quote": "expiry: 2026-10-15"
+      },
+      "presentation_days": {
+        "value": "21",
+        "quote": "presentation_days: 21"
+      }
+    },
+    "invoice": {
+      "reference": {
+        "value": "PHASE4-VERIFY-20261011-174225-INV",
+        "quote": "PHASE4-VERIFY-20261011-174225-INV"
+      },
+      "lc_reference": {
+        "value": "PHASE4-VERIFY-20261011-174225",
+        "quote": "PHASE4-VERIFY-20261011-174225"
+      },
+      "currency": {
+        "value": "EUR",
+        "quote": "EUR"
+      },
+      "amount": {
+        "value": "48000",
+        "quote": "48000"
+      }
+    },
+    "bl": {
+      "reference": {
+        "value": "PHASE4-VERIFY-20261011-174225-BL",
+        "quote": "PHASE4-VERIFY-20261011-174225-BL"
+      },
+      "lc_reference": {
+        "value": "PHASE4-VERIFY-20261011-174225",
+        "quote": "PHASE4-VERIFY-20261011-174225"
+      },
+      "consignee": {
+        "value": "SYNTHETIC BUYER LTD",
+        "quote": "SYNTHETIC BUYER LTD"
+      },
+      "shipment_date": {
+        "value": "2026-10-11",
+        "quote": "2026-10-11"
+      }
+    }
+  },
+  "asOf": "2026-10-11",
+  "deadline": "2026-10-15",
+  "findings": [
+    {
+      "id": "invoice.currency",
+      "doc": "invoice",
+      "field": "currency",
+      "title": "Invoice currency conflicts",
+      "expected": "USD",
+      "actual": "EUR",
+      "quote": "EUR",
+      "owner": "Exporter",
+      "severity": "blocker"
+    },
+    {
+      "id": "bl.consignee",
+      "doc": "bl",
+      "field": "consignee",
+      "title": "Consignee conflicts with explicit LC instruction",
+      "expected": "TO ORDER OF SYNTHETIC TEST BANK",
+      "actual": "SYNTHETIC BUYER LTD",
+      "quote": "SYNTHETIC BUYER LTD",
+      "owner": "Carrier",
+      "severity": "blocker"
+    }
+  ]
+}
