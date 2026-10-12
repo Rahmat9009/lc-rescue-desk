@@ -60,6 +60,8 @@ Authenticated dashboard screenshots, exports and a recheck recording were obtain
 
 ### cfo.ai business plan
 
+**[Read the full corrected cfo.ai business plan (PDF)](docs/submission-evidence-20261012/cfo-business-plan-corrected.pdf)**
+
 I used cfo.ai to plan a bounded, human-reviewed pilot for small trade-document service firms. The plan separates proposed commercial prices, published tariffs used in the model, unquoted allowances, unpaid founder effort and customer-supplied qualified review.
 
 | Area | Plan snapshot |
