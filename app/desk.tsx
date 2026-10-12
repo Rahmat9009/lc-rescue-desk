@@ -1,10 +1,12 @@
 'use client';
-import { useEffect,useRef,useState } from 'react';
+import { StrictMode,useEffect,useRef,useState } from 'react';
 import { ArrowRight,Check,CheckCheck,ChevronDown,Clock,Download,FileText,FolderOpen,Layers,LoaderCircle,Menu,Minus,Plus,RefreshCw,ShieldCheck,TriangleAlert,Upload,Workflow,X } from 'lucide-react';
 import { Case,Doc,Finding,Kind,ReplyAssessment,basePlan,finishInvestigation,fixtureDocs,labels,newCase,parseFixture,required } from '../lib/domain';
 import { RecoveryPlan,Sender,applyCorrespondence,defaultCandidate,demoQuotes,newCorrespondence,validateExtraction } from '../lib/recovery';
 import AnimatedContent from '../components/animated-content';
 import LcAssessment from '../components/lc-assessment';
+import ThreadField,{MotionToggle} from '../components/thread-field';
+import type { ThreadsStatus } from '../components/threads';
 type Config={liveReady:boolean;model:boolean;neatlogs:boolean;modelName:string|null};
 /* Server-issued transport tokens. Copied verbatim; never reconstructed in the browser. */
 type LcReq={revision:number;assessmentId:string;assessmentBinding:string;baseBinding:string;candidateBinding:string};
@@ -263,8 +265,11 @@ function ReplyAssessmentView({a}:{a:ReplyAssessment}){return <div className="rev
  <dt>Unconfirmed</dt><dd>{a.unconfirmed.join(' ')}</dd><dt>Next</dt><dd>{a.nextHumanAction}</dd></dl></div>;}
 
 export default function Desk(){
- const [tab,setTab]=useState('desk'),[view,setView]=useState<'home'|'case'>('home'),[cases,setCases]=useState<Case[]>([]),[c,setCase]=useState<Case|null>(null),[config,setConfig]=useState<Config|null>(null),[busy,setBusy]=useState(''),[error,setError]=useState(''),[modal,setModal]=useState(false),[mode,setMode]=useState<'demo'|'live'>('demo'),[docs,setDocs]=useState<Doc[]>(sample),[asOf,setAsOf]=useState(new Date().toISOString().slice(0,10)),[activeDoc,setActiveDoc]=useState<Kind>('lc'),[evidence,setEvidence]=useState({neatlogs:'',entire:'',checkpoint:'',business:''}),[revisions,setRevisions]=useState<Partial<Record<Kind,Doc>>>({}),[sender,setSender]=useState<Sender>('exporter'),[correspondenceText,setCorrespondenceText]=useState(''),[demo]=useState(buildDemo),[step,setStep]=useState(0),[navOpen,setNavOpen]=useState(false),[pickerOpen,setPickerOpen]=useState(false),[lcReq,setLcReq]=useState<LcReq|null>(null),[followUp,setFollowUp]=useState<string[]>([]),[lcBusy,setLcBusy]=useState(''),[lcError,setLcError]=useState(''),[freshNeeded,setFreshNeeded]=useState<string[]|null>(null),[staleNotice,setStaleNotice]=useState('');
+ const [tab,setTab]=useState('desk'),[view,setView]=useState<'home'|'case'>('home'),[cases,setCases]=useState<Case[]>([]),[c,setCase]=useState<Case|null>(null),[config,setConfig]=useState<Config|null>(null),[busy,setBusy]=useState(''),[error,setError]=useState(''),[modal,setModal]=useState(false),[mode,setMode]=useState<'demo'|'live'>('demo'),[docs,setDocs]=useState<Doc[]>(sample),[asOf,setAsOf]=useState(new Date().toISOString().slice(0,10)),[activeDoc,setActiveDoc]=useState<Kind>('lc'),[evidence,setEvidence]=useState({neatlogs:'',entire:'',checkpoint:'',business:''}),[revisions,setRevisions]=useState<Partial<Record<Kind,Doc>>>({}),[sender,setSender]=useState<Sender>('exporter'),[correspondenceText,setCorrespondenceText]=useState(''),[demo]=useState(buildDemo),[step,setStep]=useState(0),[navOpen,setNavOpen]=useState(false),[pickerOpen,setPickerOpen]=useState(false),[lcReq,setLcReq]=useState<LcReq|null>(null),[followUp,setFollowUp]=useState<string[]>([]),[lcBusy,setLcBusy]=useState(''),[lcError,setLcError]=useState(''),[freshNeeded,setFreshNeeded]=useState<string[]|null>(null),[staleNotice,setStaleNotice]=useState(''),[createError,setCreateError]=useState(''),[uploadErrors,setUploadErrors]=useState<Partial<Record<Kind,{message:string;attempt:number}>>>({}),[motionPaused,setMotionPaused]=useState(false),[fieldStatus,setFieldStatus]=useState<Record<string,ThreadsStatus>>({});
  const modalRef=useRef<HTMLDivElement>(null),opener=useRef<HTMLElement|null>(null);
+ /* busy re-renders too late to stop a second click dispatched in the same task; this ref is set
+    synchronously so one modal submission produces exactly one POST. */
+ const creatingRef=useRef(false);
  useEffect(()=>{refresh();},[]);
  useEffect(()=>{if(c)setEvidence(c.evidence);},[c?.id,c?.revision]);
  useEffect(()=>{if(!modal)return;const prev=opener.current,el=modalRef.current;
@@ -310,12 +315,25 @@ export default function Desk(){
  }
  async function refresh(){setBusy('Loading desk');setError('');try{const p=await request('/api/cases');setCases(p.cases);setCase(old=>old?p.cases.find((n:Case)=>n.id===old.id)||old:p.cases[0]||null);setConfig(p.config);}catch(e){setError((e as Error).message);}finally{setBusy('');}}
  function adoptCase(n:Case){setCase(n);setCases(old=>[n,...old.filter(o=>o.id!==n.id)].slice(0,20));}
- async function create(){setBusy('Opening case');setError('');try{const p=await request('/api/cases',{mode,docs,asOf});adoptCase(p.case);setModal(false);setTab('desk');setView('case');setRevisions({});}catch(e){setError((e as Error).message);}finally{setBusy('');}}
+ async function create(){if(creatingRef.current)return;creatingRef.current=true;setBusy('Opening case');setError('');setCreateError('');try{const p=await request('/api/cases',{mode,docs,asOf});adoptCase(p.case);setModal(false);setTab('desk');setView('case');setRevisions({});}catch(e){setCreateError((e as Error).message);}finally{creatingRef.current=false;setBusy('');}}
  async function act(type:string,extra:Record<string,unknown>={}){if(!c)return false;setBusy(type==='investigate'||type==='recheck'?'Investigating document evidence':'Saving case action');setError('');try{const p=await request(`/api/cases/${c.id}`,{type,revision:c.revision,...extra});adoptCase(p.case);if(p.case.events.some((e:Case['events'][0],i:number)=>i>=c.events.length&&e.title==='Live action failed')){setError('Live action failed. See the case history; your previous saved case is intact.');return false;}return true;}catch(e){setError((e as Error).message);return false;}finally{setBusy('');}}
  async function submitCorrespondence(){if(!correspondenceText.trim())return;if(await act('correspondence',{sender,text:correspondenceText}))setCorrespondenceText('');}
- async function upload(file:File|undefined,kind:Kind,revised=false){if(!file)return;if(file.size>16000||!file.name.toLowerCase().endsWith('.txt')){setError('Upload a UTF-8 .txt file under 16 KB. PDF and OCR are outside this build.');return;}const text=await file.text();const d={kind,text,name:file.name,version:1,synthetic:false};if(revised)setRevisions(old=>({...old,[kind]:d}));else setDocs(old=>old.map(o=>o.kind===kind?d:o));}
+ /* Revised workspace uploads report through the page-level notice, as before. Case-opening uploads
+    report beside their own document field: a rejection leaves the previous text and filename in
+    place, and a successful upload clears only that document's error. */
+ /* Upload controls are native buttons (Enter and Space both activate them, unlike a file input in
+    Chrome, which ignores Enter). Each opens the hidden file input placed right after it. */
+ function choose(e:React.MouseEvent<HTMLButtonElement>){(e.currentTarget.nextElementSibling as HTMLInputElement|null)?.click();}
+ const UPLOAD_RULE='Upload a UTF-8 .txt file under 16 KB. PDF and OCR are outside this build.';
+ async function upload(file:File|undefined,kind:Kind,revised=false){if(!file)return;
+  const reject=(message:string)=>revised?setError(message):setUploadErrors(o=>({...o,[kind]:{message,attempt:(o[kind]?.attempt||0)+1}}));
+  if(file.size>16000||!file.name.toLowerCase().endsWith('.txt')){reject(UPLOAD_RULE);return;}
+  let text:string;try{text=await file.text();}catch{reject(`This file could not be read. ${UPLOAD_RULE}`);return;}
+  const d={kind,text,name:file.name,version:1,synthetic:false};
+  if(revised)setRevisions(old=>({...old,[kind]:d}));
+  else{setDocs(old=>old.map(o=>o.kind===kind?d:o));setUploadErrors(o=>{const n={...o};delete n[kind];return n;});}}
  function download(){if(!c)return;const pack={...c,scope:'Prototype covered checks only. No bank acceptance guarantee.',exportedAt:new Date().toISOString()};const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(pack,null,2)],{type:'application/json'}));a.download=`lc-rescue-${c.id.slice(0,8)}-r${c.revision}.json`;a.click();URL.revokeObjectURL(a.href);}
- function openCase(e?:React.MouseEvent){opener.current=(e?.currentTarget as HTMLElement)||null;setModal(true);setDocs(sample);setMode('demo');}
+ function openCase(e?:React.MouseEvent){opener.current=(e?.currentTarget as HTMLElement)||null;setModal(true);setDocs(sample);setMode('demo');setCreateError('');setUploadErrors({});}
  function goHome(){setTab('desk');setView('home');setNavOpen(false);}
  function openWorkspace(n:Case|undefined){if(!n)return;setCase(n);setTab('desk');setView('case');setNavOpen(false);setPickerOpen(false);
   setLcReq(null);setFollowUp([]);setLcError('');setFreshNeeded(null);setStaleNotice('');void loadCase(n.id);}
@@ -331,6 +349,7 @@ export default function Desk(){
     receipt/reply, correspondence and reassessment are disabled. Read and export stay available. */
  const lcPending=!!c?.pendingLcAssessment;
  const gate=!!busy||lcPending;
+ const creating=busy==='Opening case';
  const stale=c?anyStale(c):false;
  const step1=!c?null:c.status==='new'?{t:'Investigate the document pack',d:'Three saved documents. Extraction runs against each source, then code compares every supported value with the letter of credit.',l:'Investigate document pack',r:()=>act('investigate')}
   :c.status==='approval'?{t:c.recoveryPlan?.nextAction||'Approve the correction requests',d:c.recoveryPlan?.reason||'Drafts are ready for the exporter and the carrier. Nothing is sent outside this desk.',l:'Approve correction requests',r:()=>act('approve')}
@@ -424,13 +443,16 @@ export default function Desk(){
     {tab!=='desk'&&<div className="page-head"><div><h1>{title}</h1><p>{blurb}</p></div><button className="btn" onClick={openCase} disabled={!!busy}><Plus size={17} aria-hidden="true"/>New case</button></div>}
 
     {/* ===================== LANDING ===================== */}
-    {home&&<>
-     <section className="hero"><div className="hero-grid">
+    {/* vinext does not wrap the App Router root in StrictMode, so the landing opts in. Whenever
+        Home mounts on the client this boundary is the inserted node, and development runs every
+        landing effect — the hero entrance and both thread renderers — mount → cleanup → mount. */}
+    {home&&<StrictMode>
+     <section className="hero"><ThreadField variant="hero" paused={motionPaused} onStatus={st=>setFieldStatus(o=>o.hero===st?o:{...o,hero:st})} clearAfter=".hero-note"/><div className="hero-grid">
       <div>
        <AnimatedContent distance={14} duration={.6}><h1>When trade documents disagree, know what to do next.</h1></AnimatedContent>
        <AnimatedContent distance={10} delay={.1}>
         <p className="hero-lede">LC Rescue Desk compares letters of credit, invoices, and bills of lading, links conflicts to source evidence, and updates correction plans as replies arrive—with human approval throughout.</p>
-        <div className="hero-actions"><button className="btn" onClick={openCase} disabled={!!busy}>Open a case<ArrowRight size={17} aria-hidden="true"/></button></div>
+        <div className="hero-actions"><button className="btn go" onClick={openCase} disabled={!!busy}>Open a case<ArrowRight size={17} className="btn-arrow" aria-hidden="true"/></button></div>
         <p className="hero-note"><ShieldCheck size={15} aria-hidden="true"/>Correction drafts stay inside the desk. Nothing is sent to a counterparty, and no outcome is certified.</p>
        </AnimatedContent>
       </div>
@@ -441,7 +463,9 @@ export default function Desk(){
        {demo.base.findings.map(f=><SourceDiff key={f.id} c={demo.base} f={f}/>)}
        <p className="basis">Presentation deadline {demo.base.deadline}, calculated from the saved expiry, presentation period and shipment date. Rendered by the same comparison code a live case runs.</p>
       </AnimatedContent>
-     </div></section>
+     </div>
+      <div className="hero-foot"><MotionToggle paused={motionPaused} available={Object.values(fieldStatus).some(st=>st!=='failed')} onToggle={()=>setMotionPaused(p=>!p)}/></div>
+     </section>
 
      <section className="band">
       <span className="label">The same case, continued · synthetic</span>
@@ -475,9 +499,9 @@ export default function Desk(){
       </div>
      </section>
 
-     <section className="cta"><h2>Work the October 12 conflict end to end.</h2>
-      <button className="btn" onClick={openCase} disabled={!!busy}>Open a case<ArrowRight size={17} aria-hidden="true"/></button></section>
-    </>}
+     <section className="cta"><ThreadField variant="closing" paused={motionPaused} onStatus={st=>setFieldStatus(o=>o.closing===st?o:{...o,closing:st})} clearAfter="h2"/><h2>Work the October 12 conflict end to end.</h2>
+      <button className="btn go" onClick={openCase} disabled={!!busy}>Open a case<ArrowRight size={17} className="btn-arrow" aria-hidden="true"/></button></section>
+    </StrictMode>}
 
     {/* ===================== WORKSPACE ===================== */}
     {tab==='desk'&&view==='case'&&c&&<>
@@ -550,8 +574,9 @@ export default function Desk(){
       {c.status==='waiting'&&<div className="receive">
        <span className="label">Receive a counterparty reply</span>
        <p className="sub">Simulated reply scenarios. Rechecking is a separate action once versions are received.</p>
-       {c.mode==='live'&&(['invoice','bl'] as Kind[]).map(k=><label key={k} className="drop"><Upload size={15} aria-hidden="true"/>{revisions[k]?.name||`Upload revised ${labels[k]}`}
-        <input type="file" accept=".txt,text/plain" onChange={e=>upload(e.target.files?.[0],k,true)}/></label>)}
+       {c.mode==='live'&&(['invoice','bl'] as Kind[]).map(k=><div key={k}>
+        <button type="button" className="drop" onClick={choose}><Upload size={15} aria-hidden="true"/><span>{revisions[k]?.name||`Upload revised ${labels[k]}`}</span><span className="sr">{revisions[k]?` selected as the revised ${labels[k]}; choose another .txt file`:' (.txt file)'}</span></button>
+        <input type="file" accept=".txt,text/plain" hidden tabIndex={-1} onChange={e=>{const f=e.target.files?.[0];e.target.value='';void upload(f,k,true);}}/></div>)}
        <button className="btn" disabled={gate||(c.mode==='live'&&(!revisions.invoice||!revisions.bl))} onClick={()=>act('reply',{reply:'available',docs:c.mode==='live'?Object.values(revisions):undefined})}>{c.mode==='demo'?'Receive synthetic corrected versions':'Receive uploaded revised versions'}</button>
        <div className="rowbtns">
         <button className="btn ghost sm" disabled={gate} onClick={()=>act('reply',{reply:'delayed'})}>Carrier delay</button>
@@ -669,8 +694,8 @@ export default function Desk(){
     <div className="modal-head"><div><h2 id="modal-title">Start at the source.</h2><p>Open a document case with the synthetic pack or your own text documents.</p></div>
      <button className="icon-btn" aria-label="Close" onClick={()=>setModal(false)}><X size={20} aria-hidden="true"/></button></div>
     <div className="modes">
-     <button aria-pressed={mode==='demo'} onClick={()=>setMode('demo')}>Synthetic demonstration<span>Fixed fixtures · no model calls</span></button>
-     <button aria-pressed={mode==='live'} onClick={()=>setMode('live')}>Live investigation<span>Real models · neatlogs traces</span></button></div>
+     <button aria-pressed={mode==='demo'} disabled={creating} onClick={()=>setMode('demo')}>Synthetic demonstration<span>Fixed fixtures · no model calls</span></button>
+     <button aria-pressed={mode==='live'} disabled={creating} onClick={()=>setMode('live')}>Live investigation<span>Real models · neatlogs traces</span></button></div>
     {mode==='demo'?<div className="modal-body"><span className="synthetic">Two deliberate conflicts</span>
      <h3>A $48,000 invoice and a presentation deadline two days after the case date.</h3>
      <p>The invoice states EUR; the LC requires USD. The bill of lading names the buyer; the LC explicitly requires an order-of-bank consignee. Case date 2026-10-10 · synthetic bank and company names.</p></div>
@@ -679,12 +704,28 @@ export default function Desk(){
        <input className="field-in" type="date" value={asOf} onChange={e=>setAsOf(e.target.value)}/></label>
       <p>Use anonymised or synthetic documents first. Text is sent to the configured model and to neatlogs. UTF-8 .txt only, up to 16,000 characters each.</p>
       {docs.map(d=><div className="docinput" key={d.kind}><div>{labels[d.kind]}
-        <label className="upload"><Upload size={14} aria-hidden="true"/>Upload .txt<input type="file" accept=".txt,text/plain" onChange={e=>upload(e.target.files?.[0],d.kind)}/></label></div>
+        <span><button type="button" className="upload" onClick={choose}><Upload size={14} aria-hidden="true"/>Upload .txt<span className="sr"> for {labels[d.kind]}</span></button>
+        <input type="file" accept=".txt,text/plain" hidden tabIndex={-1} onChange={e=>{const f=e.target.files?.[0];e.target.value='';void upload(f,d.kind);}}/></span></div>
+       {/* Keyed per attempt: each rejection inserts a fresh alert, so it is announced exactly once. */}
+       {uploadErrors[d.kind]&&<p className="field-error" role="alert" key={uploadErrors[d.kind]!.attempt}><TriangleAlert size={15} aria-hidden="true"/><span>{labels[d.kind]} upload: {uploadErrors[d.kind]!.message} The previous text is unchanged.</span></p>}
        <input aria-label={`${labels[d.kind]} filename`} value={d.name} onChange={e=>setDocs(o=>o.map(x=>x.kind===d.kind?{...x,name:e.target.value}:x))}/>
        <textarea aria-label={`${labels[d.kind]} text`} value={d.text} maxLength={16000} onChange={e=>setDocs(o=>o.map(x=>x.kind===d.kind?{...x,text:e.target.value}:x))}/></div>)}
       {!config?.liveReady&&<div className="warn">Server settings are missing. Complete Readiness before opening a live case.</div>}</div>}
-    <div className="modal-foot"><button className="btn ghost" onClick={()=>setModal(false)}>Cancel</button>
-     <button className="btn" disabled={!!busy||(mode==='live'&&!config?.liveReady)} onClick={create}>{busy&&<LoaderCircle size={16} className="spin" aria-hidden="true"/>}Open {mode==='demo'?'synthetic':'live'} case<ArrowRight size={16} aria-hidden="true"/></button></div>
+    <div className="modal-foot">
+     {/* A failed submission is shown here, beside the controls that retry it. The alert node is
+         inserted once per failure and removed when a retry starts, so each failure is announced
+         exactly once. The page-level notice behind the backdrop is no longer used for this. */}
+     {createError&&<div className="notice err modal-error" role="alert"><TriangleAlert size={16} aria-hidden="true"/><span>{createError}</span></div>}
+     <button className="btn ghost" onClick={()=>setModal(false)}>Cancel</button>
+     {/* Pending is the existing request state: create() sets busy to 'Opening case' and clears it
+         in finally. While pending the button stays focusable (aria-disabled) and ignores clicks;
+         both labels share one grid cell so the width never changes. The pending label is the
+         shorter one, so the idle label alone sets the size, as before; the status line below
+         carries the full mode-specific text, and the mode switch is disabled while pending. */}
+     <button className="btn go op" aria-disabled={creating||undefined} disabled={(!!busy&&!creating)||(mode==='live'&&!config?.liveReady)} onClick={()=>{if(!creating)void create();}}>
+      <span className="btn-labels"><span data-on={!creating||undefined}>Open {mode==='demo'?'synthetic':'live'} case</span><span data-on={creating||undefined}>Opening case…</span></span>
+      {creating?<LoaderCircle size={16} className="spin btn-arrow" aria-hidden="true"/>:<ArrowRight size={16} className="btn-arrow" aria-hidden="true"/>}</button>
+     <span className="sr" role="status">{creating?`Opening ${mode==='demo'?'synthetic':'live'} case`:''}</span></div>
    </section></div>}
  </div>;
 }

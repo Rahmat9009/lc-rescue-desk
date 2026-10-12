@@ -20,8 +20,11 @@
  --r-sm:5px;--r-md:9px;--r-lg:14px;
  --rail:244px;--gutter:clamp(16px,3.5vw,40px);
  --ease:cubic-bezier(.2,0,0,1);--fast:140ms;--slow:260ms;
+ /* Button motion: hover settles in ~160ms with no overshoot; a press answers faster. */
+ --motion-hover:160ms;--motion-press:80ms;--ease-settle:cubic-bezier(.2,0,0,1);
+ --btn-lift:color-mix(in srgb,#fff 9%,var(--pine));
 }
-@media(prefers-reduced-motion:reduce){:root{--fast:1ms;--slow:1ms}*,*::before,*::after{animation-duration:1ms!important;animation-iteration-count:1!important;transition-duration:1ms!important}.spin{animation:spin 1.6s linear infinite!important}}
+@media(prefers-reduced-motion:reduce){:root{--fast:1ms;--slow:1ms;--motion-hover:1ms;--motion-press:1ms}.btn.go,.btn.go .btn-arrow{translate:none!important}*,*::before,*::after{animation-duration:1ms!important;animation-iteration-count:1!important;transition-duration:1ms!important}.spin{animation:spin 1.6s linear infinite!important}}
 *{box-sizing:border-box}
 html{-webkit-font-smoothing:antialiased}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:var(--body);line-height:1.6}
@@ -44,6 +47,29 @@ summary::-webkit-details-marker{display:none}
 .btn.ghost:hover:not(:disabled){background:var(--sunk);border-color:var(--mute)}
 .btn.sm{min-height:36px;padding:7px 13px;font-size:14px}
 .btn.wide{width:100%}
+/* Button motion, first pass — the landing "Open a case" buttons (.btn.go) and the modal's submit
+   (.btn.go.op). Resting appearance is the plain .btn. Only compositor-friendly properties move:
+   overlay opacity and the `translate` property. The hero entrance animates the wrapper's transform,
+   never the button, so the two cannot compete. The overlay is a pseudo-element: no pointer
+   events, no accessibility node. */
+.btn.go{position:relative;isolation:isolate;
+ transition:translate var(--motion-hover) var(--ease-settle),background var(--fast) var(--ease),border-color var(--fast) var(--ease)}
+.btn.go::before{content:"";position:absolute;inset:-1px;border-radius:inherit;background:var(--btn-lift);opacity:0;z-index:-1;pointer-events:none;
+ transition:opacity var(--motion-hover) var(--ease-settle)}
+.btn.go .btn-arrow{flex-shrink:0;transition:translate var(--motion-hover) var(--ease-settle)}
+.btn.go:hover:not(:disabled){background:var(--pine);border-color:var(--pine)}
+@media(hover:hover){
+ .btn.go:hover:not(:disabled):not([aria-disabled=true])::before{opacity:1}
+ .btn.go:hover:not(:disabled):not([aria-disabled=true]) .btn-arrow{translate:3px 0}
+}
+.btn.go:active:not(:disabled):not([aria-disabled=true]){translate:0 1px;transition-duration:var(--motion-press)}
+/* The paper gap keeps the ring legible where the closing button sits over thread strands. */
+.btn.go:focus-visible{outline:2px solid var(--pine);outline-offset:2px;box-shadow:0 0 0 2px var(--paper)}
+/* Operational variant: pending keeps full contrast and focus; both labels occupy one cell. */
+.btn.go.op[aria-disabled=true]{cursor:progress}
+.btn-labels{display:inline-grid}
+.btn-labels>*{grid-area:1/1;text-align:center}
+.btn-labels>:not([data-on]){visibility:hidden}
 .link{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--pine);text-align:left}
 .link:hover:not(:disabled){text-decoration:underline;text-underline-offset:3px}
 .chip{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:11.5px;font-weight:500;border:1px solid var(--line);border-radius:var(--r-sm);padding:3px 7px;color:var(--mute);background:var(--surface);overflow-wrap:anywhere}
@@ -144,6 +170,50 @@ main.full{margin-left:0}
 .claim.no svg{color:var(--faint)}
 .cta{display:flex;justify-content:space-between;align-items:center;gap:var(--s5);flex-wrap:wrap;border-top:1px solid var(--line);margin-top:var(--s7)!important;padding-top:var(--s6)}
 .cta h2{font-size:var(--display-2);font-weight:400;max-width:22ch}
+
+/* Thread field — components/threads.tsx (adapted React Bits Threads @482ab1c) and
+   components/thread-field.tsx. The first two rules are the source's Threads.css, unchanged. */
+.threads-container{position:relative;width:100%;height:100%}
+.threads-canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
+/* Full-bleed and behind the content of its own section; never interactive, never announced.
+   `clip` (not `hidden`) keeps the sticky header working while the 100vw layer cannot add a
+   horizontal scroll. Masks, not opacity, keep the reading zones clear. */
+main.full{overflow-x:clip}
+.hero,.cta{position:relative;isolation:isolate}
+.field{position:absolute;z-index:-1;pointer-events:none;left:calc(50% - 50vw);width:100vw;opacity:0;transition:opacity 900ms var(--ease)}
+.field[data-ready]{opacity:1}
+.field-still{position:absolute;inset:0;width:100%;height:100%;display:block}
+.field-hero{top:0;bottom:-40px;
+ -webkit-mask-image:radial-gradient(ellipse 32% 50% at 29% 46%,transparent 66%,#000 100%),linear-gradient(to bottom,#000 82%,transparent);
+ mask-image:radial-gradient(ellipse 32% 50% at 29% 46%,transparent 66%,#000 100%),linear-gradient(to bottom,#000 82%,transparent);
+ -webkit-mask-composite:source-in;mask-composite:intersect}
+/* The closing action gets more vertical room so its strands have space to move; the field
+   starts below the section rule and clears the heading on the left. */
+.cta{padding-top:72px;padding-bottom:56px}
+.field-closing{top:1px;bottom:-24px;
+ -webkit-mask-image:linear-gradient(to right,transparent 40%,#000 68%),linear-gradient(to bottom,transparent,#000 18%,#000 76%,transparent);
+ mask-image:linear-gradient(to right,transparent 40%,#000 68%),linear-gradient(to bottom,transparent,#000 18%,#000 76%,transparent);
+ -webkit-mask-composite:source-in;mask-composite:intersect}
+/* Stacked (single column, phones included): a band that starts below the hero note, fills a
+   widened gap and crosses behind the top of the preview. The band's centre sits on the card's
+   top edge, so strands visibly gather and part in the open gap and through the gutters. */
+@media(max-width:1080px){
+ .field-hero{top:calc(var(--field-clear,55%) + 4px);bottom:auto;height:clamp(240px,62vw,360px);
+  -webkit-mask-image:linear-gradient(to bottom,transparent,#000 22%,#000 70%,transparent);
+  mask-image:linear-gradient(to bottom,transparent,#000 22%,#000 70%,transparent);
+  -webkit-mask-composite:source-over;mask-composite:add}
+}
+/* Stacked closing: the heading sits above a full-width button, so the field starts below the
+   heading and runs behind and beneath the button. */
+@media(max-width:560px){
+ .field-closing{top:calc(var(--field-clear,40%) + 6px);
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 45%),linear-gradient(to bottom,transparent,#000 25%,#000 70%,transparent);
+  mask-image:linear-gradient(to right,transparent,#000 45%),linear-gradient(to bottom,transparent,#000 25%,#000 70%,transparent)}
+}
+.hero-foot{display:flex;justify-content:flex-end;margin-top:var(--s3);min-height:28px}
+.motion-toggle{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;color:var(--mute);padding:5px 10px;border-radius:var(--r-sm);background:color-mix(in srgb,var(--paper) 86%,transparent)}
+.motion-toggle:hover{color:var(--ink);background:var(--sunk)}
+.motion-toggle:focus-visible{outline:2px solid var(--pine);outline-offset:2px}
 
 .casebar{display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s3) var(--s4);margin-top:var(--s4)}
 .casebar h1{font-size:18px;font-weight:600;overflow-wrap:anywhere}
@@ -394,9 +464,10 @@ blockquote.draft,dd.draft{margin:0;font-size:13.5px;line-height:1.65;color:var(-
 .rowitem .t{flex:1;min-width:180px}
 .rowitem .t b{display:block;font-size:14px;font-weight:600}
 .rowitem .t span{display:block;font-size:13px;color:var(--mute)}
-.drop{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--pine);border:1px dashed #b4c7b8;border-radius:var(--r-sm);padding:11px;margin:var(--s2) 0;cursor:pointer;overflow-wrap:anywhere}
+/* Upload controls are buttons that open a hidden native file input; they keep the approved
+   label appearance and use the global :focus-visible ring. */
+.drop{display:flex;width:100%;text-align:left;align-items:center;gap:9px;font-size:14px;color:var(--pine);border:1px dashed #b4c7b8;border-radius:var(--r-sm);padding:11px;margin:var(--s2) 0;cursor:pointer;overflow-wrap:anywhere}
 .drop:hover{background:var(--sunk)}
-.drop input{display:none}
 .warn{background:var(--ochre-bg);border:1px solid var(--ochre-line);border-radius:var(--r-sm);padding:11px;color:var(--ochre);font-size:13.5px}
 
 .doctabs{display:flex;gap:var(--s2);flex-wrap:wrap}
@@ -428,13 +499,18 @@ blockquote.draft,dd.draft{margin:0;font-size:13.5px;line-height:1.65;color:var(-
 .modal-body{padding:var(--s5)}
 .modal-body h3{font-size:18px;font-weight:400;line-height:1.4;margin:var(--s3) 0 var(--s2)}
 .modal-body>p{font-size:14px;color:var(--mute)}
-.modal-foot{display:flex;justify-content:flex-end;align-items:center;gap:var(--s4);border-top:1px solid var(--line-soft);padding:var(--s4) var(--s5);flex-wrap:wrap}
+/* Sticky within the modal's own scroll area, so the submit controls and any submission error
+   stay in view: an inserted error can never push the retry button out of sight. */
+.modal-foot{display:flex;justify-content:flex-end;align-items:center;gap:var(--s4);border-top:1px solid var(--line-soft);padding:var(--s4) var(--s5);flex-wrap:wrap;
+ position:sticky;bottom:0;z-index:1;background:var(--surface)}
+.modal-foot .modal-error{margin:0;flex:1 0 100%;font-size:14px;line-height:1.5}
 .docinput{margin-bottom:var(--s4)}
 .docinput>div{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);font-size:14px;font-weight:600;flex-wrap:wrap}
 .docinput input{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:var(--r-sm);padding:9px 11px;font-size:14px;background:var(--paper)}
 .docinput textarea{width:100%;height:112px;resize:vertical;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--paper);margin-top:6px;padding:10px;font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--mute)}
-.upload{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--pine);cursor:pointer}
-.upload input{display:none}
+.upload{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--pine);cursor:pointer;border-radius:var(--r-sm);padding:3px 6px;margin:-3px -6px}
+.field-error{display:flex;gap:8px;align-items:flex-start;margin:6px 0 0;padding:8px 10px;font-size:13.5px;font-weight:400;line-height:1.5;color:var(--rust);background:var(--rust-bg);border:1px solid var(--rust-line);border-radius:var(--r-sm);overflow-wrap:anywhere}
+.field-error svg{flex-shrink:0;margin-top:2px}
 
 footer{display:flex;justify-content:space-between;gap:var(--s3);flex-wrap:wrap;margin-top:var(--s7)!important;padding:var(--s5) 0 var(--s6);border-top:1px solid var(--line);font-size:13px;color:var(--mute)}
 footer p{margin:0}
@@ -444,7 +520,7 @@ footer p{margin:0}
  .decision{grid-template-areas:'rec' 'dates' 'quotes'}
  ul.plain.cols{columns:1}
  .support{padding:0 var(--s5) var(--s2)}
- .hero-grid{gap:var(--s5)}
+ .hero-grid{gap:clamp(88px,22vw,140px)} /* room for the stacked thread band; see .field-hero */
 }
 @media(max-width:860px){
  :root{--rail:0px}
@@ -489,7 +565,10 @@ footer p{margin:0}
  .hero h1{max-width:100%}
  .hero-actions{display:grid;gap:var(--s2)}
  .cta{flex-direction:column;align-items:stretch}
- .modal-foot{justify-content:stretch}
- .modal-foot .btn{flex:1}
+ /* Stacked footer: each control spans the modal, so the primary label sits on one line at its
+    natural 44px+ height and never wraps; DOM and visual order both stay Cancel → submit. */
+ .modal-foot{flex-direction:column;align-items:stretch;gap:var(--s3)}
+ .modal-foot .modal-error{flex:none}
+ .modal-foot .btn{width:100%}
  .casehead select{width:100%}
 }

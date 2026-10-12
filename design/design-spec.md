@@ -114,7 +114,9 @@ hero product frame, to seat it on the page.
 blocks. One radius per role; never one radius on everything.
 
 **Motion** — `--fast 140ms` controls, `--slow 260ms` arriving content, `--ease cubic-bezier(.2,0,0,1)`. Only
-user-caused state animates. Reduced motion collapses both to 1ms.
+user-caused state animates. Reduced motion collapses both to 1ms. *Exception (2026-10-11): the landing's
+continuously moving thread field, with its own pause control and reduced-motion handling — see
+[`threads-background.md`](threads-background.md). The workspace remains free of ambient motion.*
 
 ---
 

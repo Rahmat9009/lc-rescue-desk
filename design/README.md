@@ -12,6 +12,7 @@ specification and comps. Dated 2026-10-11.
 | [`references.md`](references.md) | Reference shortlist with exact Mobbin URLs, observed details kept strictly separate from proposed adaptations, and the list of what was inspected but not used |
 | [`section-map.md`](section-map.md) | All 21 sections: purpose, placement, reference, composition, real LC Rescue content, interaction states, shared components — plus 10 merge/remove/fix recommendations |
 | [`design-spec.md`](design-spec.md) | Shared tokens (type, space, surface, border, radius, status colour, motion), the coherence narrative, shared components, and the seven rules this product needs that a generic system would not |
+| [`threads-background.md`](threads-background.md) | The landing's animated thread field: source revision and licence, adaptations, tuned values, verification and measured performance |
 | [`typography.md`](typography.md) | Two alternatives on identical content, licensing verified against the actual OFL files, critiqued against Impeccable's `typeset` criteria, with a recommendation and its tradeoffs |
 
 ## Assets

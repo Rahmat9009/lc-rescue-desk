@@ -9,6 +9,7 @@ export type ReplyAssessment = { facts: string[]; assumptions: string[]; unconfir
 import type { Correspondence, Statement, RecoveryPlan, PlanHistory, PlanningFailure, Sender } from './recovery';
 import type { LcAssessment, LcAssessmentAudit, LcRequirements } from './lc-updates';
 import type { ExtractionRecord } from './source-grounding';
+import type { Clock } from './clock.ts';
 export type Case = { id: string; revision: number; mode: Mode; status: "new"|"approval"|"waiting"|"received"|"reviewed"|"stopped"; asOf: string; docs: Doc[]; history: Doc[]; fields: Partial<Record<Kind, Fields>>; extractionHistory?:ExtractionRecord[]; planningFailures?:PlanningFailure[]; findings: Finding[]; events: Event[]; deadline?: string; plan?: Plan; approval?: { revision: number; documentVersions: string; at: string; planId?:string }; replyAssessment?: ReplyAssessment; correspondence?:Correspondence[]; statements?:Statement[]; priorAssessments?:{at:string; statements:Statement[]}[]; recoveryPlan?:RecoveryPlan; planHistory?:PlanHistory[]; pendingLcAssessment?:LcAssessment; lcAssessmentHistory?:LcAssessmentAudit[]; lcUpdateRequirements?:LcRequirements; evidence: { neatlogs: string; entire: string; checkpoint: string; business: string }; modelRuns: number; modelAttempts?:number; usage: { input: number; output: number; missing:number }; createdAt: string };
 export const labels: Record<Kind,string> = { lc: "Letter of credit", invoice: "Commercial invoice", bl: "Bill of lading" };
 export const required: Record<Kind,string[]> = { lc: ["reference","currency","max_amount","consignee","latest_shipment","expiry","presentation_days"], invoice: ["reference","lc_reference","currency","amount"], bl: ["reference","lc_reference","consignee","shipment_date"] };
@@ -89,7 +90,9 @@ export function validateReplyAssessment(c:Case,a:Action,raw:unknown):ReplyAssess
  if(c.status==="received")facts.push(`User-uploaded invoice v${expected.invoiceVersion} and B/L v${expected.blVersion} are retained for recheck; issuer authenticity is not established.`);
  return {facts,assumptions:[`Earliest availability ${c.plan.earliestDate} is a planning assumption, not a scheduled carrier timeline.`],unconfirmed:["No verified carrier commitment or processing schedule is supplied.","Issuer authenticity and issuing-bank acceptance remain unconfirmed."],nextHumanAction:c.status==="received"?"Recheck the revised documents, then arrange full trade and bank presentation review.":a.reply==="waiver"?"Ask a trade specialist and issuing bank to review the waiver before proceeding.":"Escalate timing to a trade specialist and confirm the carrier's actual availability before proceeding."};
 }
-export function transition(c:Case,a:Action): Case {
+/* `now` defaults to the real clock; the Worker passes lib/runtime.ts clock(). Kept inline so this
+   module retains no runtime imports (tests/lc-updates.test.mjs guards that boundary). */
+export function transition(c:Case,a:Action,now:Clock=()=>new Date()): Case {
  if(a.revision!==c.revision)throw new CaseError("Case changed. Refresh before continuing.",409);const n=structuredClone(c);
  if((a.type==="approve"||a.type==="reply")&&(n.pendingLcAssessment||lcFollowUpBlocked(n)))throw new CaseError("Select or dismiss the pending LC assessment and complete LC basis follow-up before authorizing corrections.");
  if((a.type==="approve"||a.type==="reply")&&n.plan?.documentVersions&&n.plan.documentVersions!==documentVersions(n))throw new CaseError("A plan matching the current document versions is required.");
@@ -100,7 +103,7 @@ export function transition(c:Case,a:Action): Case {
   if(!["available","delayed","waiver"].includes(a.reply||""))throw new CaseError("Choose a reply scenario.");
   if(a.reply==="waiver"){n.status="stopped";record(n,"Counterparty coordinator","Buyer waiver is insufficient","Simulated reply. A buyer waiver is not issuing-bank acceptance; escalate for specialist and bank review.");}
   else if(a.reply==="delayed"){n.plan!.earliestDate=plusDays(n.asOf,6);n.status="stopped";record(n,"Counterparty coordinator","Delay invalidates the plan",`Simulated delay scenario assumes earliest reissue availability on ${n.plan!.earliestDate}; no carrier commitment verified. ${n.deadline&&n.plan!.earliestDate>n.deadline?`Beyond calculated ${n.deadline} deadline.`:"Specialist timing reassessment required."} Pack remains unresolved.`);}
-  else if(n.deadline&&(n.plan!.earliestDate>n.deadline || n.mode==="live"&&new Date().toISOString().slice(0,10)>n.deadline)){n.status="stopped";record(n,"Verifier","Turnaround exceeds deadline","Escalate before requesting revisions.");}
+  else if(n.deadline&&(n.plan!.earliestDate>n.deadline || n.mode==="live"&&now().toISOString().slice(0,10)>n.deadline)){n.status="stopped";record(n,"Verifier","Turnaround exceeds deadline","Escalate before requesting revisions.");}
   else if(n.mode==="demo"){
    n.docs=n.docs.map(d=>{if(d.kind==="lc")return d;let text=d.text;for(const f of n.findings.filter(f=>f.doc===d.kind))text=text.replace(new RegExp(`^${f.field}:.*$`,"m"),`${f.field}: ${f.expected}`);return {...d,text,version:d.version+1,name:d.name.replace(/v\d+/,`v${d.version+1}`),synthetic:true};});n.history.push(...n.docs.filter(d=>d.kind!=="lc").map(d=>structuredClone(d)));n.status="received";record(n,"Counterparty coordinator","Synthetic revised documents received","Fixture invoice and B/L version 2. Recheck required.");
   }else{
